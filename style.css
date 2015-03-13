@@ -1,0 +1,159 @@
+/*@import http://fonts.googleapis.com/css?family=Raleway;*/
+/*----------------------------------------------
+CSS Settings For HTML Div ExactCenter
+------------------------------------------------*/
+#main {
+    width:960px;
+    margin:50px auto;
+    font-family:raleway
+}
+#lg-form span {
+    color:red;
+}
+h2 {
+    background-color:#E6F0FF;
+    text-align:center;
+    border-radius:10px 10px 0 0;
+    margin:-10px -40px;
+    padding:15px
+}
+hr {
+    border:0;
+    border-bottom:1px solid #ccc;
+    margin:10px -40px;
+    margin-bottom:30px
+}
+input[type=text],input[type=password] {
+    /*width:99.5%;*/
+    /*padding:10px;*/
+    /*margin-top:8px;*/
+    border:1px solid #ccc;
+    padding-left:5px;
+    font-size:16px;
+    font-family:raleway;
+}
+input[type=submit] {
+    width:50%;
+    background-color:#7cfc00;
+    color:#fff;
+    padding:10px;
+    font-size:20px;
+    cursor:pointer;
+    border-radius:5px;
+    margin-bottom:15px;
+    margin-left:80px;
+}
+#profile {
+    padding:50px;
+    border:1px dashed grey;
+    font-size:20px;
+    background-color:#DCE6F7
+}
+#logout {
+    float:right;
+    padding:5px;
+    border:dashed 1px gray
+}
+/*a {*/
+    /*text-decoration:none;*/
+    /*color:#6495ed*/
+/*}*/
+i {
+    color:white;
+}
+
+.lg-container{
+    width:375px;
+    /*width:100%;*/
+    margin:100px auto;
+    padding:20px 40px;
+    border:1px solid #f4f4f4;  background:rgba(255,255,255,.5);
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+
+    -webkit-box-shadow: 0 0 2px #aaa;
+    -moz-box-shadow: 0 0 2px #aaa;
+    box-shadow: 0 0 2px #aaa;
+}
+.lg-container h2{
+    background-color:#E6F0FF;
+    text-align:center;
+    /*border-radius:10px 10px 0 0;*/
+    /*margin:-10px -40px;*/
+    /*padding:15px*/
+}
+#lg-form > div {
+    margin:10px 5px;
+    padding:5px 0;
+}
+
+#lg-form input[type="text"],
+#lg-form input[type="password"]{
+    width:99.5%;
+    padding:10px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    padding-left:5px;
+    font-size:16px;
+    font-family:raleway
+}
+#lg-form div:nth-child(3) {
+    text-align:center;
+}
+#lg-form button{
+    width:50%;
+    background-color:#73c20e;
+    color:#fff;
+    font-size:20px;
+    cursor:pointer;
+    border-radius:5px;
+}
+/*menu*/
+.bs-example{
+    /*margin: 20px;*/
+    width: 100%;
+    background: #777;
+    color: #FFFFFF;
+
+}
+.navbar-header{
+    background: #777;
+}
+.navbar-nav{
+    background: #777;
+}
+.navbar-default{
+    background: #777;
+}
+.navbar-collapse{
+    background: #777;
+}
+.navbar-default .navbar-heade>li>a {
+    color: #ffffff;
+    /*color:  #7cfc00;*/
+}
+.navbar-default .navbar-collapse>li>a {
+    color: #ffffff;
+    /*color:  #7cfc00;*/
+}
+.navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+    /*color:  #7cfc00;*/
+}
+.navbar-default .navbar-brand {
+    /*color: #ffffff;*/
+    color:  #7cfc00;
+}
+.navbar .nav > li > a:hover, .nav .navbar-nav .navbar-right > li > a:hover {
+    color:          #7cfc00;
+    text-shadow:    none;
+}
+
+.navbar-default .navbar-nav>li>a:active, .nav .navbar-nav .navbar-right > li > a:active {
+    color:          #7cfc00 ;
+    background: #7cfc00  !important;
+}
+#bs-example-navbar-collapse-1 .navbar-nav>li> a:active{
+    color:          #7cfc00 ;
+}
