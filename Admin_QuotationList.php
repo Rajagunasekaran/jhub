@@ -214,11 +214,11 @@ require_once("adminmenu.php");
     </div>
     <div class="panel-body">
         <form class="form-horizontal" id="quotationdetails">
-            <div  id="tablecontainer" style="padding-left: 20px" hidden>
+            <div  id="tablecontainer" style="padding-left: 20px" class="table-responsive" hidden>
                 <section >
                 </section>
             </div>
-            <div id="pdgdiv" hidden><a href="#" class="Quotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id" name="temp_id"></div>
+            <div id="pdgdiv" hidden><a href="#" class="Quotationpdf"><img src="images/pdfimage.png" style="max-width:60px;max-height:60px;" alt="jhub"></a><input type="hidden" id="temp_id" name="temp_id"></div>
 
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="QT_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>     BACK</button>

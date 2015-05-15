@@ -128,7 +128,7 @@
             background-color: #ffffff;
         }
         .bg-theme{
-            background-image: url(images/wallpaper47.jpg);
+            background-image: url(images/backtheme.jpg);
             max-width: 1400px;
         }
         html{

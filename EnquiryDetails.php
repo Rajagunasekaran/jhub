@@ -6,7 +6,7 @@ require_once("usermenu.php");
     $(document).ready(function(){
         $("#Quantity").doValidation({rule:'numbersonly',prop:{realpart:6,leadzero:true}});
         $('#enquirtload').css("color", "#73c20e");
-        //FILE UPLOAD
+        //**************NEW ENQUIRY FROM FILE UPLOAD PROCESS START*********************//
         $("#uploader").plupload({
             // General settings
             runtimes : 'html5,flash,silverlight,html4',
@@ -57,7 +57,8 @@ require_once("usermenu.php");
             // Silverlight settings
             silverlight_xap_url : '../../js/Moxie.xap'
         });
-        //END OF FILE UPLOAD
+        //**************NEW ENQUIRY FROM FILE UPLOAD PROCESS END*********************//
+        //**************NEW ENQUIRY FROM REQUIRED DATE START*********************//
         $("#EnquiryDate").datepicker({
             dateFormat: "yy-mm-dd",
             changeYear: true,
@@ -69,23 +70,11 @@ require_once("usermenu.php");
         var newDate = CCRE_date1.toDateString();
         newDate = new Date( Date.parse( newDate ));
         $('#EnquiryDate').datepicker("option","minDate",newDate);
-        var product_array=[];
-        $(document).on("change",'.validation', function (){
-            if(($('#productname').val()!='SELECT')&&($('#Description').val()!=''))
-            {
-                $('#product_addrow').removeAttr("disabled");
-                $('#product_updaterow').removeAttr("disabled");
-            }
-            else
-            {
-                $('#product_addrow').attr('disabled','disabled');
-                $('#product_updaterow').attr('disabled','disabled');
-            }
-        });
+       //**************NEW ENQUIRY FROM REQUIRED DATE END*********************//
+       //**************NEW ENQUIRY FROM INITIAL DATA LOAD FUNCTION START*********************//
         $('.preloader').show();
         $('textarea').autogrow({onInitialize: true});
         $( "textarea" ).autogrow( { vertical : true, horizontal : true } );
-        //error messages//
         var en_save;
         var en_date;
         $.ajax({
@@ -97,13 +86,11 @@ require_once("usermenu.php");
                 var value_array=JSON.parse(data);
                 en_save=value_array[0];
                 en_date=value_array[6];
-                alert(en_data)
             },
             error: function(data){
                 alert('error in getting'+JSON.stringify(data));
             }
         });
-        //end of error messages////
         var values_array=[];
         var xmlhttp=new XMLHttpRequest();
         xmlhttp.onreadystatechange=function()
@@ -111,17 +98,6 @@ require_once("usermenu.php");
             if (xmlhttp.readyState==4 && xmlhttp.status==200)
             {
                 values_array=JSON.parse(xmlhttp.responseText);
-                var appendcontent='<div><label style="color:#4387fd;font-size: 17px">COMPANY  NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</label><label>'+values_array[0][0]+'</label></div><br>';
-                appendcontent+='<div><label style="color:#4387fd;font-size: 17px">CONTACT PERSON&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</label><label>'+values_array[0][1]+'</label></div><br>';
-                var currentdate=new Date();
-                var month=(currentdate.getMonth()+1).toString();
-                if(month.length==1)
-                {
-                    month="0"+month;
-                }
-                var curr_date=currentdate.getDate()+'-'+month+'-'+currentdate.getFullYear();
-                appendcontent+='<div><label style="color:#4387fd;font-size: 17px">ENQUIRY DATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</label><label>'+curr_date+'</label></div>';
-                $('#enquiry_heading').append(appendcontent);
                 for(var i=0;i<values_array[1].length;i++)
                 {
                     var data=values_array[1][i];
@@ -169,111 +145,15 @@ require_once("usermenu.php");
         xmlhttp.open("POST","DB_EnquiryDetails.php?Option="+Optionvalue,true);
         xmlhttp.send();
          $('#product_updaterow').hide();
-        //Form Clear
+        //**************NEW ENQUIRY FROM INITIAL DATA LOAD FUNCTION END*********************//
+        //**************NEW ENQUIRY FROM FORM RESET FUNCTION START*********************//
         function ProductformClear()
         {
             $('#JP_EnquiryDetails')[0].reset();
-         $('#Remarks').val('').height('40');
+            $('#Remarks').val('').height('40');
         }
-//        //End Form Clear
-//        //**********DELETE ROW*************//
-//        $(document).on("click",'.product_removebutton', function (){
-//            $(this).closest('tr').remove();
-//            return false;
-//        });
-//        //Edit Row
-//
-//        $(document).on("click",'.product_editbutton', function (){
-//            $('#product_updaterow').show();
-//            $('#product_addrow').hide();
-//            var id = this.id;
-//            var splitid=id.split('/');
-//            var rowid=splitid[1];
-//            $('#productid').val(rowid);
-//            $('#Enquiry_table tr:eq('+rowid+')').each(function () {
-//                var $tds = $(this).find('td'),
-//                    jobtitle = $tds.eq(1).text(),
-//                    item = $tds.eq(2).text(),
-//                    size = $tds.eq(3).text(),
-//                    papertype = $tds.eq(4).text(),
-//                    paperweight = $tds.eq(5).text(),
-//                    printingmethod = $tds.eq(6).text(),
-//                    printingrocess = $tds.eq(7).text(),
-//                    treatmentprocess = $tds.eq(8).text(),
-//                    finishingprocess = $tds.eq(9).text(),
-//                    bindingprocess = $tds.eq(10).text(),
-//                    quantity = $tds.eq(11).text(),
-//                    date = $tds.eq(12).text(),
-//                    location = $tds.eq(13).text(),
-//                    remarks = $tds.eq(14).text();
-//                $('#Job_tilte').val(jobtitle);
-//                if(item!=""){$('#Item').val(item);}
-//                if(size!=""){$('#Size').val(size);}
-//                if(papertype!=""){$('#Papertype').val(papertype);}
-//                if(paperweight!=""){$('#Paperweight').val(paperweight);}
-//                if(printingmethod!=""){$('#Printingmethod').val(printingmethod);}
-//                if(printingrocess!=""){$('#Printingprocess').val(printingrocess);}
-//                if(treatmentprocess!=""){$('#Treatmentprocess').val(treatmentprocess);}
-//                if(finishingprocess!=""){$('#Finishingprocess').val(finishingprocess);}
-//                if(bindingprocess!=""){$('#Bindingprocess').val(bindingprocess);}
-//                $('#Quantity').val(quantity);
-//                $('#EnquiryDate').val(date);
-//                $('#DeliveryLocation').val(location);
-//                $('#Remarks').val(remarks);
-//            });
-//
-//        });
-//        //********UPDATE ROW****************//
-//        $(document).on("click",'#product_updaterow', function (){
-//            var product_id=$('#productid').val();
-//            var jobtitle=$('#Job_tilte').val();
-//            var item=$('#Item').val();
-//            if(item=='SELECT'){item="";}
-//            var Size=$('#Size').val();
-//            if(Size=='SELECT'){Size="";}
-//            var Papertype=$('#Papertype').val();
-//            if(Papertype=='SELECT'){Papertype="";}
-//            var Paperweight=$('#Paperweight').val();
-//            if(Paperweight=='SELECT'){Paperweight="";}
-//            var Printingmethod=$('#Printingmethod').val();
-//            if(Printingmethod=='SELECT'){Printingmethod="";}
-//            var Printingprocess=$('#Printingprocess').val();
-//            if(Printingprocess=='SELECT'){Printingprocess="";}
-//            var Treatmentprocess=$('#Treatmentprocess').val();
-//            if(Treatmentprocess=='SELECT'){Treatmentprocess="";}
-//            var Finishingprocess=$('#Finishingprocess').val();
-//            if(Finishingprocess=='SELECT'){Finishingprocess="";}
-//            var Bindingprocess=$('#Bindingprocess').val();
-//            if(Bindingprocess=='SELECT'){Bindingprocess="";}
-//            var Quantity=$('#Quantity').val();
-//            var Enquirydate=$('#EnquiryDate').val();
-//            var DeliveryLocation=$('#DeliveryLocation').val();
-//            var Remarks=$('#Remarks').val();
-//            if(jobtitle!="" || item!="" || Size!="" || Papertype!="" || Paperweight!="" || Printingmethod!="" ||
-//                Printingprocess!="" ||  Treatmentprocess!="" || Finishingprocess!="" || Bindingprocess!="" || Quantity!="" || Enquirydate!="" || DeliveryLocation!="" || Remarks!="")
-//            {
-//                var objUser = {"materialid":product_id,"jobtitle":jobtitle,"item":item,"size":Size,"type":Papertype,"weight":Paperweight,
-//                    "Printingmethod":Printingmethod,"Printingprocess":Printingprocess,"Treatmentprocess":Treatmentprocess,"Finishingprocess":Finishingprocess,
-//                "Bindingprocess":Bindingprocess,"Quantity":Quantity,"Enquirydate":Enquirydate,"DeliveryLocation":DeliveryLocation,"Remarks":Remarks};
-//                var objKeys = ["","jobtitle","item","size","type","weight","Printingmethod","Printingprocess","Treatmentprocess","Finishingprocess",
-//                "Bindingprocess","Quantity","Enquirydate","DeliveryLocation","Remarks"];
-//                $('#product_tr_' + objUser.materialid + ' td').each(function(i) {
-//                    $(this).text(objUser[objKeys[i]]);
-//                });
-//                $('#product_addrow').show();
-//                $('#product_updaterow').hide();
-//                ProductformClear();
-//            }
-//        });
-//   //Reset Function
-//     function Reset()
-//     {
-//         ProductformClear();
-//         $('#tablecontent').hide();
-//         product_array=[];
-//     }
-
-    //Final Enquiry Creation
+        //**************NEW ENQUIRY FROM FORM RESET FUNCTION END*********************//
+        //**************NEW ENQUIRY FROM FORM SAVE FUNCTION START*********************//
      $(document).on("click",'#Create_Enquiry', function ()
      {
          $(".preloader").show();
@@ -291,25 +171,7 @@ require_once("usermenu.php");
                  if(i==0){filesarray=name}else{filesarray=filesarray+'/'+name}
              }
          }
-
         var productrefTab = document.getElementById("JP_EnquiryDetails");
-//        var product_array=[];
-//
-//         for (var r = 1, n = productrefTab.rows.length; r < n; r++) {
-//             var productrowid=$('#productid'+i).val();
-//             row = productrefTab.rows[i];
-//             var productinnerarray=[];
-//             if(productrowid==""){productrowid=" "}
-//             productinnerarray.push(productrowid);
-//             for (var c = 1, m = productrefTab.rows[r].cells.length; c < m; c++) {
-//                 productinnerarray.push(productrefTab.rows[r].cells[c].innerHTML);
-//             }
-//             product_array.push(productinnerarray) ;
-//         }
-//        if(product_array.length==0)
-//        {
-//            product_array='null';
-//        }
          var data=$('#JP_EnquiryDetails').serialize();
          var option="Insert";
          $.ajax({
@@ -322,44 +184,63 @@ require_once("usermenu.php");
                 {
                     show_msgbox("JHUB",en_save,"success",false);
                     $('#JP_EnquiryDetails')[0].reset();
+                    $('#Item_others').hide();
+                    $('#Size_others').hide();
+                    $('#Papertype_others').hide();
+                    $('#Printingprocess_others').hide();
+                    $('#Bindingprocess_others').hide();
+                    $('#Treatmentprocess_others').hide();
+                    $('#Finishingprocess_others').hide();
+                    $('#Remarks').height(30);
+                    $('#DeliveryLocation').height(30);
                     $('#Create_Enquiry').attr('disabled','disabled');
-//                    $("#Enquiry_table").find("tr:gt(0)").remove();
                     var uploader = $('#uploader').plupload('getUploader');
                     uploader.splice();
                     $('#Create_Enquiry').attr('disabled','disabled');
                 }
+                else
+                {
+                    show_msgbox("JHUB",msg,"success",false);
+                }
              }
          });
      });
+        //**************NEW ENQUIRY FROM FORM SAVE FUNCTION END*********************//
+        //**************NEW ENQUIRY FROM FORM BUTTON VALIDATION FUNCTION START*********************//
         $('.Btn_validation').click(function(){
             $('#Create_Enquiry').removeAttr("disabled");
         });
         $('.Btn_add_validation').click(function(){
-
             $('#Create_Enquiry').attr('disabled','disabled');
-//            BtnValidation();
         });
         function BtnValidation()
         {
             var jobtitle=$('#Job_tilte').val();
             var item=$('#Item').val();
             if(item=='SELECT'){item="";}
+            if(item=='Others'){item=$('#Item_others').val();}
             var Size=$('#Size').val();
             if(Size=='SELECT'){Size="";}
+            if(Size=='Others'){Size=$('#Size_others').val();}
             var Papertype=$('#Papertype').val();
             if(Papertype=='SELECT'){Papertype="";}
+            if(Papertype=='Others'){Papertype=$('#Papertype_others').val();}
             var Paperweight=$('#Paperweight').val();
             if(Paperweight=='SELECT'){Paperweight="";}
             var Printingmethod=$('#Printingmethod').val();
             if(Printingmethod=='SELECT'){Printingmethod="";}
             var Printingprocess=$('#Printingprocess').val();
             if(Printingprocess=='SELECT'){Printingprocess="";}
+            if(Printingprocess=='Others'){Printingprocess=$('#Printingprocess_others').val();}
             var Treatmentprocess=$('#Treatmentprocess').val();
             if(Treatmentprocess=='SELECT'){Treatmentprocess="";}
+            if(Treatmentprocess=='Others'){Treatmentprocess=$('#Treatmentprocess_others').val();}
             var Finishingprocess=$('#Finishingprocess').val();
             if(Finishingprocess=='SELECT'){Finishingprocess="";}
+            if(Finishingprocess=='Others'){Finishingprocess=$('#Finishingprocess_others').val();}
             var Bindingprocess=$('#Bindingprocess').val();
             if(Bindingprocess=='SELECT'){Bindingprocess="";}
+            if(Bindingprocess=='Others'){Bindingprocess=$('#Bindingprocess_others').val();}
             var Quantity=$('#Quantity').val();
             var Enquirydate=$('#EnquiryDate').val();
             var DeliveryLocation=$('#DeliveryLocation').val();
@@ -377,63 +258,37 @@ require_once("usermenu.php");
         $('.Validation').on( 'change', function (){
             BtnValidation();
          });
-
-//        ///******************Product Add Row******************************//
-//        $('#product_addrow').on( 'click', function ()
-//        {
-//        var jobtitle=$('#Job_tilte').val();
-//        var item=$('#Item').val();
-//            if(item=='SELECT'){item="";}
-//        var Size=$('#Size').val();
-//            if(Size=='SELECT'){Size="";}
-//        var Papertype=$('#Papertype').val();
-//            if(Papertype=='SELECT'){Papertype="";}
-//        var Paperweight=$('#Paperweight').val();
-//            if(Paperweight=='SELECT'){Paperweight="";}
-//        var Printingmethod=$('#Printingmethod').val();
-//            if(Printingmethod=='SELECT'){Printingmethod="";}
-//        var Printingprocess=$('#Printingprocess').val();
-//            if(Printingprocess=='SELECT'){Printingprocess="";}
-//        var Treatmentprocess=$('#Treatmentprocess').val();
-//            if(Treatmentprocess=='SELECT'){Treatmentprocess="";}
-//        var Finishingprocess=$('#Finishingprocess').val();
-//            if(Finishingprocess=='SELECT'){Finishingprocess="";}
-//        var Bindingprocess=$('#Bindingprocess').val();
-//            if(Bindingprocess=='SELECT'){Bindingprocess="";}
-//        var Quantity=$('#Quantity').val();
-//        var Enquirydate=$('#EnquiryDate').val();
-//        var DeliveryLocation=$('#DeliveryLocation').val();
-//        var Remarks=$('#Remarks').val();
-//        if(jobtitle!="" || item!="" || Size!="" || Papertype!="" || Paperweight!="" || Printingmethod!="" ||
-//            Printingprocess!="" ||  Treatmentprocess!="" || Finishingprocess!="" || Bindingprocess!="" || Quantity!="" || Enquirydate!="" || DeliveryLocation!="" || Remarks!="")
-//        {
-//            var tablerowCount=$('#Enquiry_table tr').length;
-//            var editid='product_editrow/'+tablerowCount;
-//            var deleterowid='product_deleterow/'+tablerowCount;
-//            var row_id="product_tr_"+tablerowCount;
-//            var productid="productid"+tablerowCount;
-//            var appendrow='<tr id='+row_id+'>' +
-//                '<td><div class="col-lg-1"><span style="display: block;color:green" class="glyphicon glyphicon-edit product_editbutton" id='+editid+'></div><div class="col-lg-1"><span style="display: block;color:red" class="glyphicon glyphicon-trash product_removebutton"  id='+deleterowid+'></div><input type="hidden" class="form-control" id='+productid+' ></td>' +
-//                '<td>'+jobtitle+'</td>' +
-//                '<td>'+item+'</td>' +
-//                '<td>'+Size+'</td>' +
-//                '<td>'+Papertype+'</td>' +
-//                '<td>'+Paperweight+'</td>' +
-//                '<td>'+Printingmethod+'</td>' +
-//                '<td>'+Printingprocess+'</td>' +
-//                '<td>'+Treatmentprocess+'</td>' +
-//                '<td>'+Finishingprocess+'</td>' +
-//                '<td>'+Bindingprocess+'</td>' +
-//                '<td>'+Quantity+'</td>' +
-//                '<td>'+Enquirydate+'</td>' +
-//                '<td>'+DeliveryLocation+'</td>' +
-//                '<td>'+Remarks+'</td>' +
-//                '</tr>';
-//            $('#Enquiry_table tr:last').after(appendrow);
-//            $('#tablecontent').show();
-//            ProductformClear()
-//        }
-//        });
+        //**************NEW ENQUIRY FROM FORM BUTTON VALIDATION FUNCTION START*********************//
+        //**************NEW ENQUIRY FROM FORM OTHERS VALIDATION FUNCTION START*********************//
+        $(document).on("change",'#Item', function (){
+         if($('#Item').val()=='Others')
+         { $('#Item_others').val('').show();} else{$('#Item_others').val('').hide();}
+        });
+        $(document).on("change",'#Size', function (){
+            if($('#Size').val()=='Custom')
+            {$('#Size_others').val('').show();} else{$('#Size_others').val('').hide();}
+        });
+        $(document).on("change",'#Papertype', function (){
+            if($('#Papertype').val()=='Others')
+            {$('#Papertype_others').val('').show();} else{$('#Papertype_others').val('').hide();}
+        });
+        $(document).on("change",'#Printingprocess', function (){
+            if($('#Printingprocess').val()=='Others')
+            {$('#Printingprocess_others').val('').show();} else{$('#Printingprocess_others').val('').hide();}
+        });
+        $(document).on("change",'#Treatmentprocess', function (){
+            if($('#Treatmentprocess').val()=='Others')
+            {$('#Treatmentprocess_others').val('').show();} else{$('#Treatmentprocess_others').val('').hide();}
+        });
+        $(document).on("change",'#Finishingprocess', function (){
+            if($('#Finishingprocess').val()=='Others')
+            {$('#Finishingprocess_others').val('').show();} else{$('#Finishingprocess_others').val('').hide();}
+        });
+        $(document).on("change",'#Bindingprocess', function (){
+            if($('#Bindingprocess').val()=='Others')
+            {$('#Bindingprocess_others').val('').show();} else{$('#Bindingprocess_others').val('').hide();}
+        });
+        //**************NEW ENQUIRY FROM FORM OTHERS VALIDATION FUNCTION END*********************//
     });
 
 </script>
@@ -455,129 +310,148 @@ require_once("usermenu.php");
                     <div class="row form-group">
                         <div class="col-md-3">
                             <label>JOB TITLE</label>
-                            <input type="text" class="form-control Validation" id="Job_tilte" name="Job_tilte" placeholder="Job Title"/>
                         </div>
                         <div class="col-md-3">
-                            <label>ITEM</label>
-                            <SELECT class="form-control Validation" id="Item" name="Item">
-                                <OPTION>SELECT</OPTION>
-                             </SELECT>
-                        </div>
-                        <div class="col-md-3">
-                            <label>SIZE</label>
-                            <SELECT class="form-control Validation" id="Size" name="Size">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
-                        </div>
-                        <div class="col-md-3">
-                            <label>PAPER TYPE</label>
-                            <SELECT class="form-control Validation" id="Papertype" name="Papertype">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
+                            <input type="text" class="form-control Validation" id="Job_tilte" name="Job_tilte" maxlength="50" placeholder="Job Title"/>
                         </div>
                      </div>
-                     <div class="row form-group">
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <label>TYPE OF PRINT</label>
+                        </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Item" name="Item"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Item_others" name="Item_others" maxlength="50" placeholder="Other's Type of Print"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <label>SIZE</label>
+                        </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Size" name="Size"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Size_others" name="Size_others" maxlength="50" placeholder="Custom Size"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <label>PAPER TYPE</label>
+                        </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Papertype" name="Papertype"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Papertype_others" name="Papertype_others" maxlength="50" placeholder="Other's Papertype"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>PAPER WEIGHT</label>
-                            <SELECT class="form-control Validation" id="Paperweight" name="Paperweight">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
                         </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Paperweight" name="Paperweight"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>PRINTING METHOD</label>
-                            <SELECT class="form-control Validation" id="Printingmethod" name="Printingmethod">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
                         </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Printingmethod" name="Printingmethod"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>PRINTING PROCESS</label>
-                            <SELECT class="form-control Validation"  id="Printingprocess" name="Printingprocess">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
+                        </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation"  id="Printingprocess" name="Printingprocess"><OPTION>SELECT</OPTION></SELECT>
                         </div>
                         <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Printingprocess_others" maxlength="50" name="Printingprocess_others" placeholder="Other's Printing Process"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">
                             <label>TREATMENT PROCESS</label>
-                            <SELECT class="form-control Validation" id="Treatmentprocess" name="Treatmentprocess">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
+                        </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Treatmentprocess" name="Treatmentprocess"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Treatmentprocess_others" maxlength="50" name="Treatmentprocess_others" placeholder="Other's Treatment Process"/>
                         </div>
                      </div>
                     <div class="row form-group">
                         <div class="col-md-3">
                             <label>FINISHING PROCESS</label>
-                            <SELECT class="form-control Validation" id="Finishingprocess" name="Finishingprocess">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
                         </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Finishingprocess" name="Finishingprocess"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Finishingprocess_others" maxlength="50" name="Finishingprocess_others" placeholder="Other's Finishing Process"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>BINDING PROCESS</label>
-                            <SELECT class="form-control Validation" id="Bindingprocess" name="Bindingprocess">
-                                <OPTION>SELECT</OPTION>
-                            </SELECT>
                         </div>
+                        <div class="col-md-2">
+                            <SELECT class="form-control Validation" id="Bindingprocess" name="Bindingprocess"><OPTION>SELECT</OPTION></SELECT>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" style="display:none" class="form-control Validation" id="Bindingprocess_others" maxlength="50" name="Bindingprocess_others" placeholder="Other's Binding Process"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>QUANTITY</label>
-                            <input type="text" class="form-control Validation" id="Quantity" name="Quantity" placeholder="Quantity"/>
                         </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control Validation" id="Quantity" maxlength="10" name="Quantity" placeholder="Quantity"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">
                             <label>DATE REQUIRED</label>
+                        </div>
+                        <div class="col-md-2">
                             <input type="text" class="form-control Validation" id="EnquiryDate" name="EnquiryDate" placeholder="Date"/>
                         </div>
-                     </div>
-                     <div class="row form-group">
-
+                    </div>
+                    <div class="row form-group">
                          <div class="col-md-3">
                              <label>DELIVERY LOCATION</label>
-                             <input type="text" class="form-control Validation" id="DeliveryLocation" name="DeliveryLocation" placeholder="DeliveryLocation"/>
                          </div>
                          <div class="col-md-3">
-                             <label>REMARKS/SPECIAL REQUEST</label>
-                             <textarea class="form-control Validation" rows="2" id="Remarks" name="Remarks"></textarea>
+                             <textarea class="form-control Validation" rows="2" id="DeliveryLocation" name="DeliveryLocation" placeholder="Delivery Location"></textarea>
                          </div>
+                    </div>
+                    <div class="row form-group">
+                         <div class="col-md-3">
+                             <label>REMARKS/SPECIAL REQUEST</label>
+                         </div>
+                        <div class="col-md-3">
+                             <textarea class="form-control Validation" rows="2" id="Remarks" name="Remarks" placeholder="Remarks"></textarea>
+                        </div>
+                    </div>
                          <div class="col-md-4">
                              <input type="hidden" class="form-control Validation" name="productid" id="productid">
                          </div>
+                    <div style="max-width: 1000px" id="uploader">
                     </div>
-<!--                    <div>-->
-<!--                        <button type="button" id="product_addrow" class="btn submit_btn">ADD NEW</button>-->
-<!--                        <button type="button" id="product_updaterow" class="btn submit_btn">UPDATE</button>-->
-<!--                    </div>-->
-                </fieldset>
+                    <br>
+                    <div class="col-lg-3 col-lg-offset-4">
+                        <button type="button" id="Create_Enquiry" class="btn btn-success" disabled>CREATE ENQUIRY</button>
+                    </div>
+                  </div>
+               </fieldset>
             </form>
-            <div id="tablecontent" >
-<!--                   <div class="table-responsive">-->
-<!--                         <section>-->
-<!--                              <table id="Enquiry_table" border=1 cellspacing='0' data-class='table'class=' srcresult table'>-->
-<!--                                   <thead>-->
-<!--                                       <tr class="headercolor">-->
-<!--                                           <th style="vertical-align: top">ACTION</th>-->
-<!--                                           <th style="vertical-align: top">JOB TITLE</th>-->
-<!--                                           <th style="vertical-align: top">ITEM</th>-->
-<!--                                           <th style="vertical-align: top">SIZE</th>-->
-<!--                                           <th style="vertical-align: top">PAPER TYPE</th>-->
-<!--                                           <th style="vertical-align: top">PAPER WEIGHT</th>-->
-<!--                                           <th style="vertical-align: top">PRINTING METHOD</th>-->
-<!--                                           <th style="vertical-align: top">PRINTING PROCESS</th>-->
-<!--                                           <th style="vertical-align: top">TREATMENT PROCESS</th>-->
-<!--                                           <th style="vertical-align: top">FINISHING PROCESS</th>-->
-<!--                                           <th style="vertical-align: top">BINDING PROCESS</th>-->
-<!--                                           <th style="vertical-align: top">QUANTITY</th>-->
-<!--                                           <th style="vertical-align: top">DATE REQUIRED</th>-->
-<!--                                           <th style="vertical-align: top">DELIVERY LOCATION</th>-->
-<!--                                           <th style="vertical-align: top">REMARKS</th>-->
-<!--                                           </tr>-->
-<!--                                   </thead>-->
-<!--                              </table>-->
-<!--                         </section>-->
-<!--                   </div>-->
-<!--                <br>-->
-                <div id="uploader" style="max-width: 1000px">
-                </div>
-                <br>
-                <div class="col-lg-3 col-lg-offset-4">
-                    <button type="button" id="Create_Enquiry" class="btn btn-success" disabled>CREATE ENQUIRY</button>
-                </div>
-</div>
         </div>
     </div>
 </div>

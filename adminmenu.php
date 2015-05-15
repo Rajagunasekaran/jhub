@@ -51,6 +51,7 @@ include "HEADER.php";
                 <li><a href="Admin_Cancelled_quotationList.php" id="admincancelledlist">CANCELLED ORDER</a></li>
                 <li><a href="Admin_Confirmed_quotationList.php" id="adminconformedlist">CONFIRMED ORDER</a></li>
                 <li><a href="Admin_Delivered_quotationList.php" id="admindeliveredlist">DELIVERED ORDER</a></li>
+                <li><a href="Configuration.php" id="Configuration">SETTINGS</a></li>
             </ul>
             <!--            </ul>-->
             <ul class="nav navbar-nav navbar-right">

@@ -36,8 +36,8 @@ require_once("adminmenu.php");
             data:{"Option":'AdminEnquiryList'},
             success: function(data){
                 var values_array=data;
-                $('#tablecontainer').show();
-                $('section').html(values_array);
+                $('#newenquiry').show();
+                $('#allquotations').html(values_array);
                 $('#user_table').DataTable( {
                     "aaSorting": [],
                     "pageLength": 10,
@@ -53,6 +53,7 @@ require_once("adminmenu.php");
         });
         $(document).on("click",'.Quotationcreation', function (){
             $(".preloader").show();
+            $('#newenquiry').hide();
             var id=this.id;
             var splitid=id.split('/');
             var rowid=splitid[1];
@@ -60,12 +61,11 @@ require_once("adminmenu.php");
             xmlhttp.onreadystatechange=function(){
                 if (xmlhttp.readyState==4 && xmlhttp.status==200) {
                     var values_array=JSON.parse(xmlhttp.responseText);
-                    $('#section10').html(values_array[0]);
+                    $('#quotationupdate').html(values_array[0]);
                     $('#quotation_view').DataTable( {
                         "bSort" : false
                     });
                     $('#Quotation_Save').show();
-                    $('#tablecontainer').hide();
                     $('#EQ_Bacttolist').show();
                     $('#Enquiry_table').show();
                     $(".preloader").hide();
@@ -180,7 +180,7 @@ require_once("adminmenu.php");
                         "responsive": true,
                         "sPaginationType":"full_numbers"
                     });
-                    $('#tablecontainer').show();
+                    $('#newenquiry').show();
                     $('#EQ_Bacttolist').hide();
                     $('#Enquiry_table').hide();
                     $('#Quotation_Save').hide();
@@ -194,7 +194,7 @@ require_once("adminmenu.php");
             });
         });
         $(document).on("click",'#EQ_Bacttolist', function (){
-            $('#tablecontainer').show();
+            $('#newenquiry').show();
             $('#EQ_Bacttolist').hide();
             $('#Enquiry_table').hide();
             $('#Quotation_Save').hide();
@@ -210,22 +210,25 @@ require_once("adminmenu.php");
     </div>
     <div class="panel-body">
         <form class="form-horizontal">
-            <div style="padding-left: 20px" id="tablecontainer" hidden>
-                <section>
+            <div style="padding-left: 20px;" class="table-responsive" id="newenquiry" hidden>
+                <section id="allquotations">
                 </section>
             </div>
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="EQ_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>   BACK</button>
             </div>
-            <div style="padding-left: 15px; min-height: .01% !important;overflow-x: auto !important;" id="Enquiry_table" hidden>
+            <br>
+            <div style="padding-left: 25px" id="Enquiry_table" class="table-responsive" hidden>
                 <div><input type="hidden" id="tempstatus" name="tempstatus" class="amountonly"></div>
-             <div><h3 style="color:#337ab7;font-weight: bold" id="statuslabel"></h3></div>
-                <section id="section10">
+                <div><h3 style="color:#337ab7;font-weight: bold" id="statuslabel"></h3></div>
+                <section id="quotationupdate">
                 </section>
             </div>
-            <div class="col-lg-3 col-lg-offset-4">
-                <button type="button" id="Quotation_Save" class="btn submit_btn" disabled>SAVE QUOTATION</button>
+            <br>
+            <div class="col-lg-1 col-lg-offset-2">
+                <button type="button" id="Quotation_Save" class="btn submit_btn" disabled>SEND QUOTATION</button>
             </div>
+
         </form>
     </div>
 </div>

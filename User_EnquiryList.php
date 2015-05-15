@@ -129,186 +129,6 @@ require_once("usermenu.php");
                 $('#product_updaterow').attr('disabled','disabled');
             }
         });
-//        ///******************Product Add Row******************************//
-//        $('#product_addrow').on( 'click', function ()
-//        {
-//            var jobtitle=$('#Job_tilte').val();
-//            var item=$('#Item').val();
-//            if(item=='SELECT'){item="";}
-//            var Size=$('#Size').val();
-//            if(Size=='SELECT'){Size="";}
-//            var Papertype=$('#Papertype').val();
-//            if(Papertype=='SELECT'){Papertype="";}
-//            var Paperweight=$('#Paperweight').val();
-//            if(Paperweight=='SELECT'){Paperweight="";}
-//            var Printingmethod=$('#Printingmethod').val();
-//            if(Printingmethod=='SELECT'){Printingmethod="";}
-//            var Printingprocess=$('#Printingprocess').val();
-//            if(Printingprocess=='SELECT'){Printingprocess="";}
-//            var Treatmentprocess=$('#Treatmentprocess').val();
-//            if(Treatmentprocess=='SELECT'){Treatmentprocess="";}
-//            var Finishingprocess=$('#Finishingprocess').val();
-//            if(Finishingprocess=='SELECT'){Finishingprocess="";}
-//            var Bindingprocess=$('#Bindingprocess').val();
-//            if(Bindingprocess=='SELECT'){Bindingprocess="";}
-//            var Quantity=$('#Quantity').val();
-//            var Enquirydate=$('#EnquiryDate').val();
-//            var DeliveryLocation=$('#DeliveryLocation').val();
-//            var Remarks=$('#Remarks').val();
-//            if(jobtitle!="" || item!="" || Size!="" || Papertype!="" || Paperweight!="" || Printingmethod!="" ||
-//                Printingprocess!="" ||  Treatmentprocess!="" || Finishingprocess!="" || Bindingprocess!="" || Quantity!="" || Enquirydate!="" || DeliveryLocation!="" || Remarks!="")
-//            {
-//                var tablerowCount=$('#producttable tr').length;
-//                var editid='product_editrow/'+tablerowCount;
-//                var deleterowid='product_deleterow/'+tablerowCount;
-//                var row_id="product_tr_"+tablerowCount;
-//                var productid="productid"+tablerowCount;
-//                var appendrow='<tr id='+row_id+'>' +
-//                    '<td><div class="col-lg-1"><span style="display: block;color:green" class="glyphicon glyphicon-edit product_editbutton" id='+editid+'></div><div class="col-lg-1"><span style="display: block;color:red" class="glyphicon glyphicon-trash product_removebutton"  id='+deleterowid+'></div><input type="hidden" class="form-control" id='+productid+' ></td>' +
-//                    '<td>'+jobtitle+'</td>' +
-//                    '<td>'+item+'</td>' +
-//                    '<td>'+Size+'</td>' +
-//                    '<td>'+Papertype+'</td>' +
-//                    '<td>'+Paperweight+'</td>' +
-//                    '<td>'+Printingmethod+'</td>' +
-//                    '<td>'+Printingprocess+'</td>' +
-//                    '<td>'+Treatmentprocess+'</td>' +
-//                    '<td>'+Finishingprocess+'</td>' +
-//                    '<td>'+Bindingprocess+'</td>' +
-//                    '<td>'+Quantity+'</td>' +
-//                    '<td>'+Enquirydate+'</td>' +
-//                    '<td>'+DeliveryLocation+'</td>' +
-//                    '<td>'+Remarks+'</td>' +
-//                    '</tr>';
-//                $('#producttable tr:last').after(appendrow);
-//                $('#tablecontent').show();
-//                ProductformClear()
-//            }
-//        });
-//        function ProductformClear()
-//        {
-//            $('#Job_tilte').val('');
-//            $('#Item').val('SELECT');
-//            $('#Size').val('SELECT');
-//            $('#Papertype').val('SELECT');
-//            $('#Paperweight').val('SELECT');
-//            $('#Printingmethod').val('SELECT');
-//            $('#Printingprocess').val('SELECT');
-//            $('#Treatmentprocess').val('SELECT');
-//            $('#Finishingprocess').val('SELECT');
-//            $('#Bindingprocess').val('SELECT');
-//            $('#Quantity').val('');
-//            $('#EnquiryDate').val('');
-//            $('#DeliveryLocation').val('');
-//            $('#Remarks').val('');
-//            $('#JP_EnquiryDetails')[0].reset();
-//            $('#Remarks').val('').height('40');
-//
-//        }
-//        //**********DELETE ROW*************//
-        $(document).on("click",'.product_removebutton', function (){
-            $(this).closest('tr').remove();
-            return false;
-        });
-        //Edit Row
-        $(document).on("click",'.product_editbutton', function (){
-            $('#product_updaterow').show();
-            $('#product_addrow').hide();
-            var id = this.id;
-            var splitid=id.split('/');
-            var rowid=splitid[1];
-            $('#productid').val(rowid);
-            $('#producttable tr:eq('+rowid+')').each(function () {
-                var $tds = $(this).find('td'),
-                    jobtitle = $tds.eq(1).text(),
-                    item = $tds.eq(2).text(),
-                    size = $tds.eq(3).text(),
-                    papertype = $tds.eq(4).text(),
-                    paperweight = $tds.eq(5).text(),
-                    printingmethod = $tds.eq(6).text(),
-                    printingrocess = $tds.eq(7).text(),
-                    treatmentprocess = $tds.eq(8).text(),
-                    finishingprocess = $tds.eq(9).text(),
-                    bindingprocess = $tds.eq(10).text(),
-                    quantity = $tds.eq(11).text(),
-                    date = $tds.eq(12).text(),
-                    location = $tds.eq(13).text(),
-                    remarks = $tds.eq(14).text();
-                $('#Job_tilte').val(jobtitle);
-                if(item!=""){$('#Item').val(item);}
-                if(size!=""){$('#Size').val(size);}
-                if(papertype!=""){$('#Papertype').val(papertype);}
-                if(paperweight!=""){$('#Paperweight').val(paperweight);}
-                if(printingmethod!=""){$('#Printingmethod').val(printingmethod);}
-                if(printingrocess!=""){$('#Printingprocess').val(printingrocess);}
-                if(treatmentprocess!=""){$('#Treatmentprocess').val(treatmentprocess);}
-                if(finishingprocess!=""){$('#Finishingprocess').val(finishingprocess);}
-                if(bindingprocess!=""){$('#Bindingprocess').val(bindingprocess);}
-                $('#Quantity').val(quantity);
-                $('#DeliveryLocation').val(location);
-                $('#Remarks').val(remarks);
-                if(date!='' && date!='0000-00-00' && date!=null)
-                {
-                    var dbdate=date.split('-');
-                    var dp_mindate=new Date(dbdate[0],dbdate[1]-1,dbdate[2]);
-                    $("#EnquiryDate").datepicker("option","minDate",dp_mindate);
-                    $('#EnquiryDate').val(date);
-                }
-                else
-                {
-                    $("#EnquiryDate").datepicker("option","minDate",new Date());
-                }
-            });
-
-        });
-//        //********UPDATE ROW****************//
-//        $(document).on("click",'#product_updaterow', function (){
-//            var product_id=$('#productid').val();
-//            var jobtitle=$('#Job_tilte').val();
-//            var item=$('#Item').val();
-//            if(item=='SELECT'){item="";}
-//            var Size=$('#Size').val();
-//            if(Size=='SELECT'){Size="";}
-//            var Papertype=$('#Papertype').val();
-//            if(Papertype=='SELECT'){Papertype="";}
-//            var Paperweight=$('#Paperweight').val();
-//            if(Paperweight=='SELECT'){Paperweight="";}
-//            var Printingmethod=$('#Printingmethod').val();
-//            if(Printingmethod=='SELECT'){Printingmethod="";}
-//            var Printingprocess=$('#Printingprocess').val();
-//            if(Printingprocess=='SELECT'){Printingprocess="";}
-//            var Treatmentprocess=$('#Treatmentprocess').val();
-//            if(Treatmentprocess=='SELECT'){Treatmentprocess="";}
-//            var Finishingprocess=$('#Finishingprocess').val();
-//            if(Finishingprocess=='SELECT'){Finishingprocess="";}
-//            var Bindingprocess=$('#Bindingprocess').val();
-//            if(Bindingprocess=='SELECT'){Bindingprocess="";}
-//            var Quantity=$('#Quantity').val();
-//            var Enquirydate=$('#EnquiryDate').val();
-//            var DeliveryLocation=$('#DeliveryLocation').val();
-//            var Remarks=$('#Remarks').val();
-//            if(jobtitle!="" || item!="" || Size!="" || Papertype!="" || Paperweight!="" || Printingmethod!="" ||
-//                Printingprocess!="" ||  Treatmentprocess!="" || Finishingprocess!="" || Bindingprocess!="" || Quantity!="" || Enquirydate!="" || DeliveryLocation!="" || Remarks!="")
-//            {
-//                var objUser = {"materialid":product_id,"jobtitle":jobtitle,"item":item,"size":Size,"type":Papertype,"weight":Paperweight,
-//                    "Printingmethod":Printingmethod,"Printingprocess":Printingprocess,"Treatmentprocess":Treatmentprocess,"Finishingprocess":Finishingprocess,
-//                    "Bindingprocess":Bindingprocess,"Quantity":Quantity,"Enquirydate":Enquirydate,"DeliveryLocation":DeliveryLocation,"Remarks":Remarks};
-//                var objKeys = ["","jobtitle","item","size","type","weight","Printingmethod","Printingprocess","Treatmentprocess","Finishingprocess",
-//                    "Bindingprocess","Quantity","Enquirydate","DeliveryLocation","Remarks"];
-//                $('#product_tr_' + objUser.materialid + ' td').each(function(i) {
-//                    $(this).text(objUser[objKeys[i]]);
-//                });
-//                $('#product_addrow').show();
-//                $('#product_updaterow').hide();
-//                var CCRE_date1 = new Date();
-//                var CCRE_day=CCRE_date1.getDate();
-//                CCRE_date1.setDate( CCRE_day + 1 );
-//                var newDate = CCRE_date1.toDateString();
-//                newDate = new Date( Date.parse( newDate ));
-//                $('#EnquiryDate').datepicker("option","minDate",newDate);
-//                ProductformClear()
-//            }
-//        });      var Removefilearray=[];
         $(document).on("click",'.userenquiryview', function (){
             var id=this.id;
             Removefilearray=[];
@@ -321,24 +141,23 @@ require_once("usermenu.php");
                 if (xmlhttp.readyState==4 && xmlhttp.status==200) {
                     var values_array=JSON.parse(xmlhttp.responseText);
                     var value_array=values_array[0];
-                   var tabledata='<table id="producttable" border=1 cellspacing="0" data-class="table" class="srcresult table">' +
+                   var tabledata='<table id="producttable" style="width:2500px;" border=1 cellspacing="0" data-class="table" class="srcresult table">' +
                         '<thead>' +
                         '<tr class="headercolor">' +
-//                        '<th style="vertical-align: top">ACTION</th>'+
-                        '<th>JOB TITLE</th>'+
-                        '<th style="vertical-align: top">ITEM</th>'+
-                        '<th style="vertical-align: top">SIZE</th>'+
-                        '<th>PAPER TYPE</th>'+
-                        '<th>PAPER WEIGHT</th>'+
-                        '<th>PRINTING METHOD</th>'+
-                        '<th>PRINTING PROCESS</th>'+
-                        '<th>TREATMENT PROCESS</th>'+
-                        '<th>FINISHING PROCESS</th>'+
-                        '<th>BINDING PROCESS</th>'+
-                        '<th style="vertical-align: top">QUANTITY</th>'+
-                        '<th>DATE REQUIRED</th>'+
-                        '<th>DELIVERY LOCATION</th>'+
-                        '<th style="vertical-align: top">REMARKS</th>'+
+                        '<th style="text-align:center;width:100px;!important;">JOB TITLE</th>'+
+                        '<th style="text-align:center;width:120px;!important;">ITEM</th>'+
+                        '<th style="text-align:center;width:50px;!important;">SIZE</th>'+
+                        '<th style="text-align:center;width:100px;!important;">PAPER TYPE</th>'+
+                        '<th style="text-align:center;width:120px;!important;">PAPER WEIGHT</th>'+
+                        '<th style="text-align:center;width:150px;!important;">PRINTING METHOD</th>'+
+                        '<th style="text-align:center;width:150px;!important;">PRINTING PROCESS</th>'+
+                        '<th style="text-align:center;width:150px;!important;">TREATMENT PROCESS</th>'+
+                        '<th style="text-align:center;width:150px;!important;">FINISHING PROCESS</th>'+
+                        '<th style="text-align:center;width:130px;!important;">BINDING PROCESS</th>'+
+                        '<th style="text-align:center;width:90px;!important;">QUANTITY</th>'+
+                        '<th style="text-align:center;width:120px;!important;">DATE REQUIRED</th>'+
+                        '<th style="text-align:center;width:170px;!important;">DELIVERY LOCATION</th>'+
+                        '<th style="text-align:center;width:170px;!important;">REMARKS</th>'+
                        '</tr></thead><tbody>';
                    for(var i=0;i<value_array.length;i++)
                    {
@@ -362,10 +181,6 @@ require_once("usermenu.php");
                        if(value_array[i][13]==null){value_array[i][13]="";}
                        if(value_array[i][14]==null){value_array[i][14]="";}
                        tabledata+='<tr id='+row_id+'>' +
-//                           '<td style="width: 100px">' +
-//                           '<div class="col-lg-1"><span style="display: block;color:green" class="glyphicon glyphicon-edit product_editbutton" id='+editid+'></div>' +
-//                           '<div class="col-lg-1"><span style="display: block;color:red" class="glyphicon glyphicon-trash product_removebutton"  id='+deleterowid+'></div>' +
-//                           '<input type="hidden" value='+value_array[i][0]+' class="form-control" id='+productid+' ></td>' +
                            '<td>'+value_array[i][1]+'</td>' +
                            '<td>'+value_array[i][2]+'</td>' +
                            '<td>'+value_array[i][3]+'</td>' +
@@ -445,7 +260,7 @@ require_once("usermenu.php");
 <div class="panel panel-info" >
     <div class="preloader"><span class="Centerer"></span><img class="preloaderimg"   /> </div>
     <div class="panel-heading" style="background:#73c20e;color:black;">
-        <h3 class="panel-title" style="color:#ffffff;font-weight: bold">ENQUIRY DETAILS UPDATION</h3>
+        <h3 class="panel-title" style="color:#ffffff;font-weight: bold">ENQUIRY DETAILS</h3>
     </div>
     <div class="panel-body">
         <form class="form-horizontal">
@@ -453,12 +268,12 @@ require_once("usermenu.php");
                 <section >
                 </section>
             </div>
-            <div id="pdgdiv" hidden><a href="#" class="UserQuotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id"></div>
+            <div id="pdgdiv" hidden><a href="#" class="UserQuotationpdf"><img src="images/pdfimage.jpg"  alt="StarHub"></a><input type="hidden" id="temp_id"></div>
 
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="UQT_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>   BACK</button>
             </div>
-            <div  id="table_UserQuotationview" style="max-width: 1000px"   hidden>
+            <div style="padding-left: 15px" id="table_UserQuotationview" class="table-responsive" hidden>
                 <div><h3 style="color:#337ab7;font-weight: bold" id="userquotationviewstatus"></h3></div>
                 <section1>
                 </section1>
@@ -474,6 +289,7 @@ require_once("usermenu.php");
                 <div class="col-lg-9 col-lg-offset-10">
                     <button type="button" id="update_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>    BACK</button>
                 </div>
+                <br>
                 </div>
                     <div style="padding-left: 15px" id="updatetablecontent" class="table-responsive" hidden>
 

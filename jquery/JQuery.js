@@ -516,6 +516,14 @@ function show_msgbox(title,msg,status,confirmation)
     {
         $('body').append('<div class="jconfirm white msgbox" hidden="" ><div class="jconfirm-bg"></div><div class="container"><div class="row"><div class="col-md-6 col-md-offset-3 span6 offset3"><div class="jconfirm-box" style="-webkit-transition-duration: 0.4s; transition-duration: 0.4s; margin-top: 157.5px;"><div class="closeIcon"><span class="fa fa-remove"></span></div><div class="msgboxtitle" style="" ></div><span class="divider"></span><div class="msgboxcontent"></div><div class="buttons pull-right"><button class="maxbtn menuconfirm" style="background-color:#73c20e;"><i class="fa fa-check fa-1x"></i>OK</button><button class="maxbtn msgcancel" ><i class="fa fa-remove fa-1x"></i>CANCEL</button></div><div class="jquery-clear"></div></div></div></div></div></div>');
     }
+    else if(confirmation=="delete")
+    {
+        $('body').append('<div class="jconfirm white msgbox" hidden="" ><div class="jconfirm-bg"></div><div class="container"><div class="row"><div class="col-md-6 col-md-offset-3 span6 offset3"><div class="jconfirm-box" style="-webkit-transition-duration: 0.4s; transition-duration: 0.4s; margin-top: 157.5px;"><div class="closeIcon"><span class="fa fa-remove"></span></div><div class="msgboxtitle" style="" ></div><span class="divider"></span><div class="msgboxcontent"></div><div class="buttons pull-right"><button class="btn Confirm" style="background-color:#73c20e;">OK</button><button class="btn msgcancel" style="background-color:#73c20e">CANCEL</button></div><div class="jquery-clear"></div></div></div></div></div></div>');
+    }
+    else if(confirmation=="pdfconfirm")
+    {
+        $('body').append('<div class="jconfirm white msgbox" hidden="" ><div class="jconfirm-bg"></div><div class="container"><div class="row"><div class="col-md-6 col-md-offset-3 span6 offset3"><div class="jconfirm-box" style="-webkit-transition-duration: 0.4s; transition-duration: 0.4s; margin-top: 157.5px;"><div class="closeIcon"><span class="fa fa-remove"></span></div><div class="msgboxtitle" style="" ></div><span class="divider"></span><div class="msgboxcontent"></div><div class="buttons pull-right"><button class="btn pdfConfirm" style="background-color:#73c20e;">OK</button><button class="btn msgcancel" style="background-color:#73c20e">CANCEL</button></div><div class="jquery-clear"></div></div></div></div></div></div>');
+    }
     else
     {
         $('body').append('<div class="jconfirm white msgbox" hidden="" ><div class="jconfirm-bg"></div><div class="container"><div class="row"><div class="col-md-6 col-md-offset-3 span6 offset3"><div class="jconfirm-box" style="-webkit-transition-duration: 0.4s; transition-duration: 0.4s; margin-top: 157.5px;"><div class="closeIcon"><span class="fa fa-remove"></span></div><div class="msgboxtitle" style="" ></div><span class="divider"></span><div class="msgboxcontent"></div><div class="buttons pull-right"><button class="maxbtn msgconfirm" style="background-color:#73c20e;"><i class="fa fa-check fa-1x"></i>OK</button></div><div class="jquery-clear"></div></div></div></div></div></div>');
@@ -530,7 +538,7 @@ function show_msgbox(title,msg,status,confirmation)
     $(".msgboxcontent").text(msg);
     $(".msgbox").show();
 }
-$(document).on("click",'.msgcancel,.msgconfirm,.menuconfirm', function (){
+$(document).on("click",'.msgcancel,.msgconfirm,.menuconfirm,.Confirm,.pdfConfirm', function (){
     $(".msgbox").hide();
 });
 function resetPreloader(pos){

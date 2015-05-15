@@ -52,6 +52,13 @@ require_once("usermenu.php");
                     "responsive": true,
                     "sPaginationType":"full_numbers"
                 });
+                $('section3').html(value_array[3]);
+                $('#example3').DataTable( {
+                    "aaSorting": [],
+                    "pageLength": 10,
+                    "responsive": true,
+                    "sPaginationType":"full_numbers"
+                });
                 $(".preloader").hide();
             }
         }
@@ -70,6 +77,7 @@ require_once("usermenu.php");
         <div class="panel-body">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#newquotation" data-toggle="tab" aria-expanded="true" style="font-weight: bold;font-size: 17px">NEW QUOTATION</a></li>
+                <li class=""><a href="#confirmedquotation" data-toggle="tab" aria-expanded="true" style="font-weight: bold;font-size: 17px">CONFIRMED ORDER</a></li>
                 <li class=""><a href="#cancelquotation" data-toggle="tab" aria-expanded="true" style="font-weight: bold;font-size: 17px">CANCELLED ORDER</a></li>
                 <li class=""><a href="#deliveredquotation" data-toggle="tab" aria-expanded="true" style="font-weight: bold;font-size: 17px">DELIVERED ORDER</a></li>
             </ul>
@@ -81,6 +89,13 @@ require_once("usermenu.php");
                         <section>
 
                         </section>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="confirmedquotation">
+                    <div id="ConfirmedQuotationcontainer" style="max-width:1000px;padding-left: 70px">
+                        <section3>
+
+                        </section3>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="cancelquotation">

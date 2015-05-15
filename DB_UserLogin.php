@@ -90,7 +90,7 @@ function UserTable()
         $editrowid="EditRow/".$record[0].'/'.$record[8];
         $deleterowid="DeleterRow/".$record[0];
         $appendTable .="<tr id='$record[0]'>";
-        $appendTable .="<td style='text-align:center'><a href='#' id='$editrowid' class='Edit' title='Edit'><span class='glyphicon glyphicon-pencil'></span></a><a href='#' id=$deleterowid class='Delete' title='Delete'><span class='glyphicon glyphicon-trash' style='color:red'></span></a></td>";
+        $appendTable .="<td style='text-align:center'><a href='#' id='$editrowid' class='Edit' title='Edit'><span class='glyphicon glyphicon-edit' style='color:green'></span></a></td>";
         for($y = 1; $y < 8; $y++)
         {
             $appendTable .="<td style='text-align:center;font-size: 14px !important;'>".$record[$y]."</td>";
