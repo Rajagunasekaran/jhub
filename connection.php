@@ -1,3 +1,3 @@
 <?php
-$connection=mysqli_connect("localhost","root","","jprint");
+$connection=mysqli_connect("localhost","root","","JPRINT");
 ?>

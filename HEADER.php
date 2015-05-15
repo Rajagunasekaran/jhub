@@ -45,7 +45,10 @@
     <script src="http://cdn.datatables.net/responsive/1.0.4/js/dataTables.responsive.min.js"></script>
     <script src="http://cdn.datatables.net/plug-ins/f2c75b7247b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
     <script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>
-
+    <!--file upload-->
+    <link rel="stylesheet" href="js_upload/jquery.ui.plupload/css/jquery.ui.plupload.css" type="text/css" />
+    <script type="text/javascript" src="js_upload/plupload.full.min.js"></script>
+    <script type="text/javascript" src="js_upload/jquery.ui.plupload/jquery.ui.plupload.js"></script>
 
     <script type="text/javascript" src="js/jquery.leanModal.min.js"></script>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
@@ -96,6 +99,8 @@
             word-wrap: break-word ;
             color:white;
             background-color:#8F9397;
+            font-size: 14px !important;
+            vertical-align: top !important;
         }
         .dashboardheadercolor{
             table-layout: fixed;
@@ -108,17 +113,33 @@
         }
         .headertitle{
             color:#858B87;
-            font-weight: bold
+            /*font-weight: bold*/
         }
         .panelcolor{
             background:#F3782B;
             color:black;
         }
-        .menuheadercolor
+        .panelheadcolor
         {
-
+            background-color:#73c20e;
+            color:black;
         }
+        .table-striped>tbody>tr:nth-of-type(odd) {
+            background-color: #ffffff;
+        }
+        .bg-theme{
+            background-image: url(images/wallpaper47.jpg);
+            max-width: 1400px;
+        }
+        html{
+            width:1300px;
+        }
+        .styletr {border-bottom: 1px solid black;}
     </style>
+<!--    <meta charset="utf-8">-->
+<!--    <link rel="shortcut icon" type="image/ico" href="images/favicon_JHUB.ico">-->
+<!--    <meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">-->
+    <title>JHUB</title>
 </head>
 
 </html>

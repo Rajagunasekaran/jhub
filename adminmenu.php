@@ -1,4 +1,5 @@
 <?php
+//ver:0.01:Initial Version :SD    &     ED :31-03-2015 Done By Kumar R
 include('session.php');
 include "HEADER.php";
 ?>
@@ -9,12 +10,28 @@ include "HEADER.php";
     <meta charset="UTF-8">
 </head>
 
-<body>
+<body style="padding-left: 50px; max-width: 1400px">
 <!-- <div class="container">-->
-<img src="images/logo.png" alt="StarHub">
-<div class="bs-example">
+<!--<img src="images/logo.png" alt="StarHub">-->
+<div class="row">
+    <div class="col-sm-6" style="text-align:left;"><img src="images/JHUB.png" style="max-height:100px;max-width:200px;"></div>
 
-    <nav id="myNavbar" class="navbar navbar-default" role="navigation">
+    <?php
+    if($imgname!="")
+    {
+        ?>
+        <div class="col-sm-6" style="text-align:right;"><img src="<?php echo $img_url ?>" style="max-height:100px;max-width:75px"><br><span style="font-size: 16px;padding-right: 20px;"><?php echo strtoupper($login_session) ?></span></div>
+    <?php
+    }
+    else{?>
+        <div class="col-sm-6" style="text-align:right;"><img style="max-height:100px;max-width:75px"/><br><br><br><br><span style="font-size: 16px;"><?php echo strtoupper($login_session) ?></span></div>
+    <?php
+    }
+    ?>
+</div>
+<div class="bs-example pagesize" >
+
+    <nav  id="myNavbar" class="navbar navbar-default" role="navigation">
 
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -24,17 +41,20 @@ include "HEADER.php";
                 <span class="icon-bar"></span>
             </button>
         </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div  class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <!--            <ul class="nav navbar-nav">-->
             <ul class="nav navbar-nav">
-                <li><a href="DashBoard.php" ><span class="glyphicon glyphicon-home" style="color:#ffffff"></span>  DASHBOARD</a></li>
-                <li><a href="profile.php"  class="profileform">LOGIN CREATION</a></li>
-                <li><a href="Admin_EnquiryList.php"  class="entrylist">ENQUIRY</a></li>
-                <li><a href="Admin_QuotationList.php" >QUOTATION</a></li>
+                <li><a href="AdminNotifications.php" id="Adminnotifications"><span class="glyphicon glyphicon-home" style="color:#ffffff"></span>  DASHBOARD</a></li>
+                <li><a href="UserLogin.php" id="Loginform"  class="profileform">LOGIN CREATION</a></li>
+                <li><a href="Admin_EnquiryList.php" id="Adminenquirylist" class="entrylist">NEW ENQUIRY</a></li>
+                <li><a href="Admin_QuotationList.php" id="adminquotationlist">QUOTATION STATUS</a> </li>
+                <li><a href="Admin_Cancelled_quotationList.php" id="admincancelledlist">CANCELLED ORDER</a></li>
+                <li><a href="Admin_Confirmed_quotationList.php" id="adminconformedlist">CONFIRMED ORDER</a></li>
+                <li><a href="Admin_Delivered_quotationList.php" id="admindeliveredlist">DELIVERED ORDER</a></li>
             </ul>
             <!--            </ul>-->
             <ul class="nav navbar-nav navbar-right">
-                <li><a><span class="glyphicon glyphicon-user" style="color:#ffffff";></span><?php echo strtoupper($login_session) ?></a></li>
+<!--                <li><a><span class="glyphicon glyphicon-user" style="color:#ffffff";></span>--><?php //echo strtoupper($login_session) ?><!--</a></li>-->
                 <li><a href="logout.php">LOGOUT  <i class="fa fa-power-off" style="color: white"></i></a></li>
 
             </ul>

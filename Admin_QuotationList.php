@@ -1,17 +1,33 @@
 <?php
+//ver:0.01:Initial Version :SD    &     ED :31-03-2015 Done By Kumar R
 require_once("adminmenu.php");
 ?>
 <HTML>
 <script>
     $(document).ready(function(){
+        $('#adminquotationlist').css("color", "#73c20e");
         $(".preloader").show();
         $('#QT_Bacttolist').hide();
+        var imageerror;
+        $.ajax({
+            type: "POST",
+            url: "DB_Error_Msg.php",
+            data:{"Option":'ERROR'},
+            success: function(data){
+                $('.preloader').hide();
+                var value_array=JSON.parse(data);
+                imageerror=value_array[11];
+            },
+            error: function(data){
+                alert('error in getting'+JSON.stringify(data));
+            }
+        });
+
         $.ajax({
             type: "POST",
             url: "DB_EnquiryDetails.php",
             data:{"Option":'AdminQuotationList'},
             success: function(data){
-                $(".preloader").hide();
                 var values_array=data;
                 $('#tablecontainer').show();
                 $('section').html(values_array);
@@ -24,6 +40,8 @@ require_once("adminmenu.php");
                 $('#QT_Bacttolist').hide();
                 $('#pdgdiv').hide();
                 $('#recverdetails').hide();
+                $("#fileToUpload").val('');
+                $(".preloader").hide();
             },
             error: function(data){
                 alert('error in getting'+JSON.stringify(data));
@@ -42,17 +60,24 @@ require_once("adminmenu.php");
                     $('#table_Quotationview').show();
                     $('section1').html(values_array[0]);
                     $('#quotation_view').DataTable( {
-                        "aaSorting": [],
-                        "pageLength": 10,
-                        "responsive": true,
-                        "sPaginationType":"full_numbers"
+                        "bSort" : false
                     });
-                    $('#adminquotationviewid').text(values_array[1])
+                    $('#adminquotationviewid').text("STATUS : "+values_array[1])
                     $(".preloader").hide();
                     $('#tablecontainer').hide();
                     $('#QT_Bacttolist').show();
                     $('#pdgdiv').show();
                     $('#recverdetails').hide();
+                    if(values_array[1]=='CONFIRMED ORDER')
+                    {
+                    $('#Btn_Delivered').show();
+                    $('#fileuploadform').show();
+                    }
+                    else
+                    {
+                    $('#Btn_Delivered').hide();
+                    $('#fileuploadform').hide();
+                    }
                 }
             }
             var Option="AdminQuotationView";
@@ -60,39 +85,6 @@ require_once("adminmenu.php");
             xmlhttp.send();
 
         });
-//lp quotation view
-        $(document).on("click",'.LPQuotationView', function (){
-            $(".preloader").show();
-            var id=this.id;
-            var splitid=id.split('/');
-            var rowid=splitid[1];
-            var xmlhttp=new XMLHttpRequest();
-            xmlhttp.onreadystatechange=function(){
-                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                    var values_array=JSON.parse(xmlhttp.responseText);
-                    $('#table_LPQuotationview').show();
-                    $('section4').html(values_array[0]);
-                    $('#Allrecverdetails').DataTable( {
-                        "aaSorting": [],
-                        "pageLength": 10,
-                        "responsive": true,
-                        "sPaginationType":"full_numbers"
-                    });
-                    $('#tablecontainer').hide();
-                    $('#QT_Bacttolist').hide();
-                    $('#table_Quotationview').hide();
-                    $('#pdgdiv').hide();
-                    $('#recverdetails').hide();
-                    $('#tablelpquotationstatus').text(values_array[1]);
-                    $(".preloader").hide();
-                }
-            }
-            var Option="AdminLPQuotationView";
-            xmlhttp.open("POST","DB_EnquiryDetails.php?Option="+Option+"&Data="+rowid);
-            xmlhttp.send();
-
-        });
-
         $(document).on("keyup",'.decimal', function (){
             var val = $(this).val();
             if(isNaN(val)){
@@ -186,38 +178,69 @@ require_once("adminmenu.php");
             $('#recverdetails').show();
             $('#table_LPQuotationview').hide();
         });
+        $(document).on("click",'#Btn_Delivered', function (){
+            var QT_id=$('#temp_id').val();
+            var FormElement=document.getElementById('quotationdetails');
+            var xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange=function(){
+                if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                    var values_array=JSON.parse(xmlhttp.responseText);
+                    $('#tablecontainer').show();
+                    $('section').html(values_array);
+                    $('#user_table').DataTable( {
+                        "aaSorting": [],
+                        "pageLength": 10,
+                        "responsive": true,
+                        "sPaginationType":"full_numbers"
+                    });
+                    $('#QT_Bacttolist').hide();
+                    $('#table_Quotationview').hide();
+                    $('#pdgdiv').hide();
+                    $('#recverdetails').hide();
+                }
+            }
+            var Option="Delivered";
+            xmlhttp.open("POST","DB_EnquiryDetails.php?Option="+Option+"&Data="+QT_id);
+            xmlhttp.send(new FormData(FormElement));
+        });
     });
 </script>
-<body>
+<body class="bg-theme">
 <div class="container">
 <div class="panel panel-success" >
     <div class="preloader"><span class="Centerer"></span><img class="preloaderimg"   /> </div>
-    <div class="panel-heading" style="background:#FF8C00;">
-        <h3 class="panel-title" style="color:#ffffff;font-weight: bold">QUOTATION DETAILS</h3>
+    <div class="panel-heading" style="background:#73c20e;">
+        <h3 class="panel-title" style="color:#ffffff;font-weight: bold">UPDATED QUOTATION DETAILS</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal">
-            <div  id="tablecontainer"  hidden>
+        <form class="form-horizontal" id="quotationdetails">
+            <div  id="tablecontainer" style="padding-left: 20px" hidden>
                 <section >
                 </section>
             </div>
-            <div id="pdgdiv" hidden><a href="#" class="Quotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id"></div>
+            <div id="pdgdiv" hidden><a href="#" class="Quotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id" name="temp_id"></div>
 
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="QT_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>     BACK</button>
             </div>
-            <div  id="table_Quotationview" style="max-width:1000px"  hidden>
-
+            <div style="padding-left: 15px" id="table_Quotationview" class="table-responsive" hidden>
                 <div><h3 style="color:#337ab7;font-weight: bold" id="adminquotationviewid"></h3></div>
                 <section1>
                 </section1>
+                <div id='fileuploadform'>
+                <div><label>POD FILES</label>
+                    <input type="file" name="fileToUpload"  class="fileextensionchk" id="fileToUpload">
+                </div>
+                </div>
+                <div class="col-lg-5 col-lg-offset-6">
+                    <button type="button" id="Btn_Delivered" class="btn submit_btn">DELIVERED</button>
+                </div>
             </div>
             <div id="recverdetails" hidden>
                 <div class="col-lg-9 col-lg-offset-10">
                     <button type="button" id="AllQT_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>     BACK</button>
                 </div>
                 <div  id="table_AllQuotationview">
-
                     <div><h3 style="color:#337ab7;font-weight: bold">QUOTATION DETAILS</h3></div>
                     <section2>
                     </section2>

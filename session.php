@@ -11,6 +11,10 @@ $ses_sql=mysqli_query($connection,"SELECT *FROM JP_USER_LOGIN_DETAILS UPD,JP_ROL
 $row = mysqli_fetch_assoc($ses_sql);
 $login_session =$row['ULD_USERNAME'];
 $login_status =$row['RC_NAME'];
+$img_sql=mysqli_query($connection,"SELECT *FROM JP_USER_LOGIN_DETAILS WHERE ULD_USERNAME='$user_check'");
+$imgrow = mysqli_fetch_assoc($img_sql);
+$imgname=$imgrow['ULD_IMAGE_NAME'];
+$img_url="images/".$imgname;
 if(!isset($login_session)){
 mysqli_close($connection); // Closing Connection
 header('Location: index.php'); // Redirecting To Home Page

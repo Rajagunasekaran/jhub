@@ -1,9 +1,11 @@
 <?php
+//ver:0.01:Initial Version :SD    &     ED :31-03-2015 Done By Kumar R
 require_once("adminmenu.php");
 ?>
 <HTML>
 <script>
     $(document).ready(function(){
+        $('#adminconformedlist').css("color", "#73c20e");
         $(".preloader").show();
         $.ajax({
             type: "POST",
@@ -30,7 +32,7 @@ require_once("adminmenu.php");
 <body>
 <div class="panel panel-success" >
     <div class="preloader"><span class="Centerer"></span><img class="preloaderimg"   /> </div>
-    <div class="panel-heading" style="background:#FFE4C4;color:black;">
+    <div class="panel-heading" style="background:#73c20e;color:black;">
         <h3 class="panel-title" style="color:#000080;font-weight: bold">REVISED QUOTATION DETAILS</h3>
     </div>
     <div class="panel-body">

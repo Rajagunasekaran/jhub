@@ -43,8 +43,6 @@ require_once("adminmenu.php");
                     "sPaginationType":"full_numbers"
                 });
                 $('#dashboard').show();
-if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
-{
                 $('section1').html(value_array[2]);
                 $('#example2').DataTable( {
                     "aaSorting": [],
@@ -52,10 +50,7 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
                     "responsive": true,
                     "sPaginationType":"full_numbers"
                 });
-}
-                else{
-    $('#nodata').text(value_array[2]);
-}
+
                 $('#dashboard').show();
                 $('#table_Quotationview').hide();
             }
@@ -63,6 +58,12 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
         var Option="AdminNotificationList";
         xmlhttp.open("POST","DB_EnquiryDetails.php?Option="+Option);
         xmlhttp.send();
+        $(document).on("keyup",'.numbersOnly', function (){
+            if (this.value != this.value.replace(/[^0-9\.]/g, ''))
+            {
+                this.value = this.value.replace(/[^0-9\.]/g, '');
+            }
+        });
         //ENQUIRY DASHBOARD
         $(document).on("change",'.Quotationprice', function (){
             var id=this.id;
@@ -71,7 +72,15 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
             if(amtsplit[1]=="" || amtsplit[1]==undefined)
             {
                 $('#'+id).val(currentvalue +'.00')
-                if(currentvalue==""){$('#'+id).val('')}
+                if(currentvalue=="")
+                {$('#'+id).val('')}
+            }
+            else
+            {
+                var real= amtsplit[0];
+                var imag=amtsplit[1].substring(0, 2)
+                var amountvalue=real+'.'+imag;
+                $('#'+id).val(amountvalue)
             }
             var total=0;
             var x =  $('#quotation_view>tbody>tr').length-1;
@@ -89,7 +98,34 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
                 }
             }
             var finalamount=total.toString();
-            $('#quotationtotal').text(total).html();
+            if(x==1)
+            {
+                $('#quotationtotal').text(total).html();
+            }
+            else
+            {
+                $('#quotationtotal').text(total.toFixed(2)).html();
+            }
+        });
+        $(document).on("change",'.Quotationamountvalidation', function (){
+            var x =  $('#quotation_view>tbody>tr').length-1;
+            var amountflag=0;
+            for(var j=1;j<=x;j++)
+            {
+                var currentamt=$('#QT_'+j).val();
+                if(currentamt!='' && currentamt!=0.00)
+                {
+                    amountflag++;
+                }
+            }
+            if(x!=amountflag)
+            {
+                $('#Quotation_Save').attr('disabled','disabled');
+            }
+            else
+            {
+                $('#Quotation_Save').removeAttr("disabled");
+            }
         });
         $(document).on("click",'#Quotation_Save', function (){
             $(".preloader").show();
@@ -113,7 +149,7 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
                     $('#dashboard').show();
                     $('#Enquirytable').hide();
                     $('#table_Quotationview').hide();
-                    show_msgbox("QUOTATION CREATION",qo_update,"success",false)
+                    show_msgbox("J-PRINT",qo_update,"success",false)
                 },
                 error: function(data){
                     alert('error in getting'+data);
@@ -141,6 +177,7 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
                     $('#table_Quotationview').hide();
                     $('#table_reorderQuotationview').hide();
                     $(".preloader").hide();
+                    $('#Quotation_Save').attr('disabled','disabled');
                     if(values_array[1]!=null && values_array[1]!=0 && values_array[1]!=0.00 )
                     {
                         $('#tempstatus').val(4)
@@ -249,7 +286,7 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
             <div class="col-sm-6">
                 <div height="50%">
                     <div class="panel-heading">
-                        <h3 class="panel-title" style="background-color:#FFFFFF;color:#337ab7;font-weight: bold">RECENT ENQUIRES</h3>
+                        <h3 class="panel-title" style="background-color:#FFFFFF;color:#337ab7;font-weight: bold">NEW ENQUIRES</h3>
                     </div>
                     <div class="panel-body" style="background-color:#FFFFFF;">
                     <div id="enquirycontainer">
@@ -261,7 +298,7 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
                 </div>
                 <div height="50%">
                     <div class="panel-heading">
-                        <h3 class="panel-title" style="color:#337ab7;font-weight: bold">REORDER QUOTATIONS</h3>
+                        <h3 class="panel-title" style="color:#337ab7;font-weight: bold">CANCEL ORDERS</h3>
                     </div>
                     <div id="nodata" style="color: red"></div>
 
@@ -278,23 +315,32 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
             <div class="col-sm-6">
                 <div height="50%">
                     <div class="panel-heading">
-                        <h3 class="panel-title" style="color:#337ab7;font-weight: bold">RECENT CONFORMED ORDERS</h3>
+                        <h3 class="panel-title" style="color:#337ab7;font-weight: bold">NEW CONFIRMED ORDERS</h3>
                     </div>
                     <div class="panel-body" style="background-color:#FFFFFF;">
-                    <div id="reordercontainer">
-                    <section2>
+                        <div id="reordercontainer">
+                            <section2>
 
-                    </section2>
-                </div>
-                        </div>
+                            </section2>
+                         </div>
+                    </div>
                  </div>
                 <div height="50%">
-
+<!--                    <div class="panel-heading">-->
+<!--                        <h3 class="panel-title" style="color:#337ab7;font-weight: bold">RECENT DELIVERED ORDERS</h3>-->
+<!--                    </div>-->
+<!--                    <div class="panel-body" style="background-color:#FFFFFF;">-->
+<!--                        <div id="deliveredcontainer">-->
+<!--                            <section9>-->
+<!---->
+<!--                            </section9>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>
       </div>
-        <div id="Enquirytable" style="max-width: 700px"hidden>
+        <div id="Enquirytable" style="max-width: 1000px"hidden>
             <div><input type="hidden" id="tempstatus" name="tempstatus"></div>
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="DB_Bacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>    BACK</button>
@@ -303,19 +349,19 @@ if(value_array[2]!='NO REORDERED QUOTATION AVAILABLE')
             <section3>
             </section3>
             <div class="col-lg-3 col-lg-offset-4">
-                <button type="button" id="Quotation_Save" class="btn btn-success" >SAVE QUOTATION</button>
+                <button type="button" id="Quotation_Save" class="btn btn-success" disabled>SAVE QUOTATION</button>
             </div>
         </div>
-        <div  id="table_Quotationview" style="max-width:700px"  hidden>
+        <div  id="table_Quotationview" style="max-width:1000px"  hidden>
 <!--            <div id="pdgdiv"><a href="#" class="Quotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id"></div>-->
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="QT_Bacttolist" class="btn btn-info" style="background-color:#337ab7;;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>     BACK</button>
             </div>
-            <div><h3 style="color:#337ab7;font-weight: bold">CONFORMED ORDER</h3></div>
+            <div><h3 style="color:#337ab7;font-weight: bold">CONFIRMED ORDER</h3></div>
             <section10>
             </section10>
         </div>
-        <div  id="table_reorderQuotationview" style="max-width:700px"  hidden>
+        <div  id="table_reorderQuotationview" style="max-width:1000px"  hidden>
             <!--            <div id="pdgdiv"><a href="#" class="Quotationpdf"><img src="images/pdfimage.jpg" alt="StarHub"></a><input type="hidden" id="temp_id"></div>-->
             <div class="col-lg-9 col-lg-offset-10">
                 <button type="button" id="QT_ROBacttolist" class="btn btn-info" style="background-color:#337ab7;color:white" ><span class="glyphicon glyphicon-fast-backward"></span>     BACK</button>

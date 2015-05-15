@@ -217,11 +217,10 @@ require_once("adminmenu.php");
     </script>
 </head>
 <body>
-<div class="container">
 <div class="panel panel-info" >
     <div class="preloader"><span class="Centerer"></span><img class="preloaderimg"   /> </div>
-    <div class="panel-heading" style="background:#FF8C00;color:black;">
-        <h3 class="panel-title" style="color:#ffffff;font-weight: bold">LOGIN CREATION</h3>
+    <div class="panel-heading" style="background:#FFE4C4;color:black;">
+        <h3 class="panel-title" style="color:#000080;font-weight: bold">LOGIN CREATION</h3>
     </div>
     <div class="panel-body">
         <form class="form-horizontal">
@@ -270,7 +269,7 @@ require_once("adminmenu.php");
 
         </form>
     </div>
-</div>
+
 </div>
 </body>
 </HTML>

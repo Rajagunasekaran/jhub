@@ -74,7 +74,7 @@ body.jconfirm-noscroll {
   font-weight: bold;
   font-family: inherit;
   padding: 10px 15px 5px;
-  background-color:#FF8C00;
+  background-color:#73c20e !important;
   color: #ffffff;
   max-width: 350px;
 }
