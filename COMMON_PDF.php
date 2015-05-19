@@ -5,10 +5,11 @@ include "connection.php";
 require_once('mpdf571/mpdf571/mpdf.php');
 $ued_rowid=$_GET["inputValOne"];
 
-$dateselectcallquery="SELECT DATE_FORMAT(UED_DATE,'%d-%m-%Y')as UEDDATE ,QD_QUOTATION_ID,UED.ULD_ID FROM JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD WHERE UED.UED_ID='$ued_rowid' AND UED.QD_ID = QD.QD_ID";
+$dateselectcallquery="SELECT DATE_FORMAT(UED_DATE,'%d-%m-%Y')as UEDDATE ,QD_QUOTATION_ID,UED.ULD_ID,JED.ES_STATUS FROM JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS JED WHERE UED.QD_ID = QD.QD_ID AND JED.ES_ID=UED.ES_ID AND UED.UED_ID=".$ued_rowid;
 $select = $connection->query($dateselectcallquery);
 if($record=mysqli_fetch_array($select))
 {
+    $q_status=strtoupper($record['ES_STATUS']);
     $date= $record['UEDDATE'];
     $eq_id=$record['QD_QUOTATION_ID'];
     $uld_id=$record['ULD_ID'];
@@ -29,86 +30,71 @@ if($record2=mysqli_fetch_array($select2))
     $contact_no=$record2['CD_CONTACT_NO'];
     $quotationheader=$record2['CD_QUOTATION_HEADER'];
 }
-$uedrowid=$_GET["inputValOne"];
-$select_option="SELECT *FROM VW_USER_PRODUCT_DETAILS WHERE UED_ID='$uedrowid'";
-//$select_option="SELECT ET.ETI_PRODUCT_NAME,PD_DIMENSION,PD_DESCRIPTION,PD_PRICE,UED_PRICE FROM jp_user_product_details UPD,JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_TITLE ET WHERE UPD.UED_ID='$uedrowid' AND UPD.UED_ID=UED.UED_ID AND ET.ETI_ID=UPD.ETI_ID";
-$sql=mysqli_query($connection,$select_option);
-$record=mysqli_num_rows($sql);
-$y=$record;
-$appendTablepdf ="<table cellspacing='3px' cellpadding='15px' style='width:700px;border-collapse: collapse;border: 1px solid black;'>
-<thead style='table-layout: fixed; word-wrap: break-word ; color:#000000;' class='headercolor'>
-<tr>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>JOB TILTE</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>ITEM</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>SIZE</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>PAPER TYPE</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>PAPER METHOD</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>PRINTING METHOD</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>PRINTING PROCESS</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>TREATMENT PROCESS</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>FINISHING PROCESS</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>BINDING PROCESS</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>QUANTITY</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>DATE REQUIRED</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>DELIVERY LOCATION</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>REMARKS</th>
-<th style='text-align:center;color:#000000;background-color:#d3d3d3;border: 1px solid black;'>PRICE($)</th>
-</tr>
-</thead>
-<tbody>";
-while($record=mysqli_fetch_array($sql))
+if($q_status=='CANCELLED')
 {
-    $price=$record[17];
-    $appendTablepdf .="<tr>";
-    for($y = 2; $y <=16; $y++) {
-        if($record[$y]=='0000-00-00')
-        {
-        $appendTablepdf .="<td style='text-align:center;border: 1px solid black;'></td>";
-        }
-        else{
-        $appendTablepdf .="<td style='text-align:center;border: 1px solid black;'>".$record[$y]."</td>";
-        }
-     }
-
-    $appendTablepdf .="</tr>";
+    $q_status='CANCELLED ORDER';
 }
-$appendTablepdf .="<tr ><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style='text-align:right;font-weight:bold'>TOTAL</td><td style='text-align:center;border: 1px solid black;font-weight:bold;background-color:#d3d3d3;'>$".$price."</td></tr>";
-
-$appendTablepdf .="</tbody></table>";
-$id="<table style='width:700px;' cellspacing='3px' cellpadding='15px' style='padding-left:-20px;'>
-<tr ><td style='width:300px;'></td><td style='width:400px;padding-left: 200px;'><label> Contact  :".$contact_no."</label></td></tr>
-<tr>
-<td style='width:300px;border-bottom: 1px solid black'><img img src='images/JHUB.png' style='max-height:250px;max-width:250px;'/></td>
-<td align='left' style='width:400px;padding-left:100px;font-size: 16px;font-weight: bold;border-bottom: 1px solid black'>
-<label>".$companyaddress."</label>
-</td></tr>
- <tr><td border-bottom: 1px spolid #000;></td>
-  </tr>
-</table><br><br>";
-$header="<table><tr><td style='color:green;font-weight: bold;font-size: 15px'><u>".$quotationheader."</u></td></tr></table>";
-$details="<table><tr>
-<td><label color='green'>USER NAME</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>:</label>&nbsp;&nbsp;&nbsp;&nbsp;<label>$user_name</label></td>
-</tr><br><br>
-<tr>
-<td><label  color='green'>QUOTATION ID</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>:</label>&nbsp;&nbsp;&nbsp;&nbsp;<label>$eq_id</label></td>
-</tr><br><br>
-<tr>
-<td><label  color='green'>DATE</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>:</label>&nbsp;&nbsp;&nbsp;&nbsp;<label>$date</label></td>
-</tr><br><br>
-<tr>
-<td><label color='green'>COMPANY NAME</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>:</label>&nbsp;&nbsp;&nbsp;&nbsp;<label>$companyname</label></td>
-</tr><br><br>
-<tr>
-<td><label color='green'>CONTACT PERSON</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>:</label>&nbsp;&nbsp;&nbsp;&nbsp;<label>$contactperson</label></td>
-</tr>
-</table><br>";
+elseif($q_status=='DELIVERED')
+{
+    $q_status='DELIVERED ORDER';
+}
+else
+{
+    $q_status=$q_status;
+}
+$uedrowid=$_GET["inputValOne"];
+$select_option="SELECT *FROM VW_USER_PRODUCT_DETAILS WHERE UED_ID=".$ued_rowid;
+$sql=mysqli_query($connection,$select_option);
+if($record3=mysqli_fetch_array($sql))
+{
+  $jobtitle=$record3['PD_JOB_TITLE'];
+  $typeofprint=$record3['PRODUCT_NAME'];if($typeofprint=='' || $typeofprint==null){$typeofprint='-';}
+  $Size=$record3['SIZE'];if($Size=='' || $Size==null){$Size='-';}
+  $Papertype=$record3['PAPER_TYPE'];if($Papertype=='' || $Papertype==null){$Papertype='-';}
+  $Paperweight=$record3['PAPER_WEIGHT'];if($Paperweight=='' || $Paperweight==null){$Paperweight='-';}
+  $Printingmethod=$record3['PRINTING_METHOD'];if($Printingmethod=='' || $Printingmethod==null){$Printingmethod='-';}
+  $Printingprocess=$record3['PRINTING_PROCESS'];if($Printingprocess=='' || $Printingprocess==null){$Printingprocess='-';}
+  $Treatmentprocess=$record3['TREATMENT_PROCESS'];if($Treatmentprocess=='' || $Treatmentprocess==null){$Treatmentprocess='-';}
+  $Finishingprocess=$record3['FINISHING_PROCESS'];if($Finishingprocess=='' || $Finishingprocess==null){$Finishingprocess='-';}
+  $Bindingprocess=$record3['BINDING_PROCESS'];if($Bindingprocess=='' || $Bindingprocess==null){$Bindingprocess='-';}
+  $Quantity=$record3['PD_QUANTITY'];if($Quantity=='' || $Quantity==null){$Quantity='-';}
+  $Location=$record3['PD_DELIVERY_LOC'];if($Location=='' || $Location==null){$Location='-';}
+  $Requireddate=$record3['PD_REQUIRED_DATE'];if($Requireddate=='' || $Requireddate=='0000-00-00'){$Requireddate='-';}
+  $Description=$record3['PD_DESCRIPTION'];if($Description=='' || $Description==null){$Description='-';}
+  $Price=$record3['PD_PRICE'];if($Price=='' || $Price==null){$Price='-';}
+}
+$pdfname='JHUB-'.$q_status.'-'.$eq_id;
+$appendTable='<html><body><table width="1500px"><tr><td style="text-align: center"><img src="images/JHUB.png" height="70px" width="250px"/></tr>
+<tr><td style="text-align: center">'.$companyaddress.'</td></tr>
+<tr><td style="text-align: center">Contact No : '.$contact_no.'</td></tr>
+<hr/></table>
+<h4 style="padding-left:50px;color:green;"><b><U>'.$q_status.'</U></b><h4>
+<table cellpadding="12" style="padding-left:25px">
+<tr><td style="width:175px;"><b>USER NAME</b></td><td>:</td><td style="width:200px;">'.$user_name.'</td><td style="width:175px;"><b>QUOTATION ID</b></td><td>:</td><td style="width:150px;">'.$eq_id.'</td></tr>
+<tr><td style="width:175px;"><b>DATE</b></td><td>:</td><td style="width:200px;">'.$date.'</td><td style="width:175px;"><b>COMPANY NAME</b></td><td>:</td><td style="width:150px;">'.$companyname.'</td></tr>
+<tr><td style="width:175px;"><b>CONTACT PERSON</b></td><td>:</td><td style="width:200px;">'.$contactperson.'</td><td style="width:175px;"></td><td></td><td style="width:150px;"></td></tr>
+</table>
+<table cellpadding="11" ><hr/>
+<tr><td style="width:250px;color:green; font-size:16px"><b><u>'.$quotationheader.'</u></b></td>
+<tr><td style="width:200px; padding-left:30px; "><b>PROJECT TITLE</b></td><td style="width:50px">:</td><td>'.$jobtitle.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>TYPE OF PRINT</b></td><td style="width:50px">:</td><td>'.$typeofprint.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>SIZE</b></td><td style="width:50px">:</td><td>'.$Size.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>PAPER TYPE</b></td><td style="width:50px">:</td><td>'.$Papertype.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>PAPER WEIGHT</b></td><td style="width:50px">:</td><td>'.$Paperweight.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>PRINTING METHOD</b></td><td style="width:50px">:</td><td>'.$Printingmethod.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>PRINTING PROCESS</b></td><td style="width:50px">:</td><td>'.$Printingprocess.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>TREATMENT PROCESS</b></td><td style="width:50px">:</td><td>'.$Treatmentprocess.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>FINISHING PROCESS</b></td><td style="width:50px">:</td><td>'.$Finishingprocess.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>BINDING PROCESS</b></td><td style="width:50px">:</td><td>'.$Bindingprocess.'</td></tr>
+<tr><td style="width:200px; padding-left:30px;"><b>QUANTITY</b></td><td style="width:50px">:</td><td>'.$Quantity.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>DATE REQUIRED</b></td><td style="width:50px">:</td><td>'.$Requireddate.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>DELIVERY LOCATION</b></td><td style="width:50px">:</td><td>'.$Location.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>REMARKS/SPECIAL REQUEST</b></td><td style="width:50px">:</td><td>'.$Description.'</td></tr>
+<tr><td style="width:200px; padding-left:30px; "><b>PRICE</b></td><td style="width:50px">:</td><td>'.$Price.'</td></tr>
+</table>';
 $mpdf=new mPDF('utf-8','A4');
-$mpdf->WriteHTML($image);
-$mpdf->WriteHTML($id);
-$mpdf->WriteHTML($details);
-$mpdf->WriteHTML($header);
+$mpdf->WriteHTML($appendTable);
 $mpdf->debug=true;
 $mpdf->SetHTMLFooter('<div style="text-align: center;">{PAGENO}</div>');
-$mpdf->WriteHTML($appendTablepdf);
-$mpdf->Output('Quotation.pdf','D');
+$mpdf->Output($pdfname.'.pdf','D');
 ?>
