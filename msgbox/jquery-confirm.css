@@ -85,7 +85,7 @@ body.jconfirm-noscroll {
     max-width: 350px;
   overflow: hidden;
   overflow-y: auto;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: bold;
 }
 .jconfirm .jconfirm-box div.msgboxcontent:empty {

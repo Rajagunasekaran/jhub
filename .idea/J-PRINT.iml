@@ -8,6 +8,8 @@
         <option name="pythonPath" value="C:\Python27\python.exe" />
         <option name="email" value="kumar.r@ssomens.com" />
         <option name="gp" value="dfc1dfdfdfc7dfcbdfd8dfd8dfcbdfc4dfcddfcbdfc4" />
+        <option name="oauth2" value="false" />
+        <option name="nocache" value="false" />
       </configuration>
     </facet>
   </component>
@@ -17,4 +19,3 @@
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
-

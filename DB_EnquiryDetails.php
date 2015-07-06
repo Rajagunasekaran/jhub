@@ -105,104 +105,37 @@ elseif($_REQUEST["Option"]=="AdminQuotation")
 {
     $uedrowid=$_REQUEST["UEDID"];
     $id=$_REQUEST["UEDID"];
-    $statusquery="SELECT ES.ES_STATUS FROM JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_STATUS ES WHERE UED_ID='$id' AND UED.ES_ID=ES.ES_ID";
+    $statusquery="SELECT ES.ES_STATUS,ULD_UPLOAD_IMG_NAME,ULD_POD_IMAGENAME FROM JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_STATUS ES WHERE UED_ID='$id' AND UED.ES_ID=ES.ES_ID";
     $select = $connection->query($statusquery);
     if($record=mysqli_fetch_array($select))
     {
         $status= $record['ES_STATUS'];
+        $uploadimagename=$record['ULD_UPLOAD_IMG_NAME'];
+        $podimages=$record['ULD_POD_IMAGENAME'];
     }
     $status=strtoupper($status);
-//    $select_option="SELECT PD_ID,ET.ETI_PRODUCT_NAME,PD_DIMENSION,PD_DESCRIPTION,PD_PRICE,UED_PRICE FROM JP_USER_PRODUCT_DETAILS UPD,JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_TITLE ET WHERE UPD.UED_ID='$uedrowid' AND UPD.UED_ID=UED.UED_ID AND ET.ETI_ID=UPD.ETI_ID";
     $select_option="SELECT *FROM VW_USER_PRODUCT_DETAILS WHERE UED_ID='$uedrowid'";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
-    $appendTable2 ="<table id='quotation_view' style='width:2500px;' border=1 cellspacing='0' data-class='table'class='srcresult table '>
-    <thead class='headercolor'>
-    <tr class='head' style='text-align:center'>
-    <th style='text-align:center;width:100px;!important;'>JOB TITLE</th>
-    <th style='text-align:center;width:120px;!important;'>TYPE OF PRINT</th>
-    <th style='text-align:center;width:50px;!important;'>SIZE</th>
-    <th style='text-align:center;width:100px;!important;'>PAPER TYPE</th>
-    <th style='text-align:center;width:120px;!important;'>PAPER WEIGHT</th>
-    <th style='text-align:center;width:150px;!important;'>PRINTING METHOD</th>
-    <th style='text-align:center;width:150px;!important;'>PRINTING PROCESS</th>
-    <th style='text-align:center;width:150px;!important;'>TREAMENT PROCESS</th>
-    <th style='text-align:center;width:150px;!important;'>FINISHING PROCESS</th>
-    <th style='text-align:center;width:130px;!important;'>BINDING PROCESS</th>
-    <th style='text-align:center;width:90px;!important;'>QUANTITY</th>
-    <th style='text-align:center;width:120px;!important;'>DATE REQUIRED</th>
-    <th style='text-align:center;width:170px;!important;'>DELIVERY LOCATION</th>
-     <th style='text-align:center;width:150px;!important;'>REMARKS</th>
-    <th style='text-align:center;width:100px;!important;'>PRICE($)</th>
-    </tr>
-    </thead>
-    <tbody>";
-    $loopid=1;
+    $SelectedRow=array();
     while($record=mysqli_fetch_array($sql))
     {
-        $rowid="QT_".$loopid;
-        $temprowid="QTtemp_".$loopid;
-        $rowno=$record[1];
-        $price=$record[16];
-        $totalprice=$record[17];
-        $appendTable2 .="<tr>";
+        $ID=$record[1];
         for($y = 2; $y <=16; $y++)
         {
-            if($y==16)
-            {
-            if($price!="")
-            {
-           $appendTable2 .="<td><input type='text' value=$price class='numbersOnly Quotationprice decimal Quotationamountvalidation' id=$rowid maxlength='8'  style='border:0;text-align:right;font-size: 12px !important;'>
-           <input type='hidden' id=$temprowid value=$rowno style='border:0;font-size: 12px !important;' value=></td>";
-            }
-            else
-            {
-           $appendTable2 .="<td><input type='text' class='numbersOnly Quotationprice decimal Quotationamountvalidation' id=$rowid maxlength='8' style='border:0;text-align:right;font-size: 12px !important;'>
-           <input type='hidden' id=$temprowid  value=$rowno style='border:0;'></td>";
-            }
-            }
-            elseif($y==13 && $record[$y]=='0000-00-00')
-            {
-                $appendTable2 .="<td> </td>";
-            }
-            else
-            {
-            $appendTable2 .="<td style='text-align:left;font-size: 14px !important;'>".$record[$y]."</td>";
-            }
+            array_push($SelectedRow,$record[$y]);
         }
-        $appendTable2 .="</tr>";
-        $loopid++;
     }
-    $appendTable2 .="<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style='text-align:right;font-weight: bold;margin-right: 50px'>TOTAL</td><td style='text-align:right;'><label id='quotationtotal' style='font-weight: bold;font-size: 14px !important;padding-right: 40px;' >$totalprice</td></tr>";
-    $appendTable2 .="</tbody></table>";
-
-    $values=array($appendTable2,$totalprice,$status);
+    array_push($SelectedRow,$ID);
+    $values=array($SelectedRow,$status,$uploadimagename,$podimages);
     echo JSON_encode($values);
 }
 elseif($_POST["Option"]=="AdminQuotationupdation")
 {
- $priceupdatedata=$_POST["Data"];
-  $status=$_POST["Status"];
-     $pd_id;$product_price;
-    if($product!='null')
-    {
-        for($i=0;$i<count($priceupdatedata);$i++)
-        {
-            if($i==0)
-            {
-                $pd_id=$priceupdatedata[$i][0]; $product_price=$priceupdatedata[$i][1];
-            }
-            else
-            {
-                $pd_id=$pd_id.','.$priceupdatedata[$i][0]; $product_price=$product_price.'^'.$priceupdatedata[$i][1];
-            }
-        }
-    }
-    if($status==1)
-    {
-    $callquery="CALL SP_ENQUIRY_INSERT_UPDATE(2,'$pd_id',NULL,NULL,2,'NULL','$product_price',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$login_session',@SUCCESS_FLAG,@ENQUIRYID,@ENQUIRYDATE)";
-    }
+    $priceupdatedata=$_POST["Data"];
+    $Pdid=$_POST["Status"];
+    $callquery="CALL SP_ENQUIRY_INSERT_UPDATE(2,'$Pdid',NULL,NULL,2,'NULL','$priceupdatedata',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$login_session',@SUCCESS_FLAG,@ENQUIRYID,@ENQUIRYDATE)";
     $result = $connection->query($callquery);
     if(!$result)
     {
@@ -262,11 +195,13 @@ elseif($_REQUEST["Option"]=="AdminQuotationView")
 {
     $uedrowid=$_REQUEST["Data"];
     $id=$_REQUEST["Data"];
-    $statusquery="SELECT ES.ES_STATUS FROM JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_STATUS ES WHERE UED_ID='$id' AND UED.ES_ID=ES.ES_ID";
+    $statusquery="SELECT ES.ES_STATUS,ULD_UPLOAD_IMG_NAME,ULD_POD_IMAGENAME FROM JP_USER_ENQUIRY_DETAILS UED,JP_ENQUIRY_STATUS ES WHERE UED_ID='$id' AND UED.ES_ID=ES.ES_ID";
     $select = $connection->query($statusquery);
     if($record=mysqli_fetch_array($select))
     {
         $status= $record['ES_STATUS'];
+        $uploadimagename=$record['ULD_UPLOAD_IMG_NAME'];
+        $podimages=$record['ULD_POD_IMAGENAME'];
     }
     $status=strtoupper($status);
     $select_option="SELECT *FROM VW_USER_PRODUCT_DETAILS WHERE UED_ID='$uedrowid'";
@@ -274,59 +209,17 @@ elseif($_REQUEST["Option"]=="AdminQuotationView")
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
-    $appendTable4 ="<table id='quotation_view' style='width:2500px;' border=1 cellspacing='0' data-class='table'class='srcresult table'>
-    <thead class='headercolor'>
-    <tr class='head' style='text-align:center'>
-    <th style='text-align:center;width:100px;!important;'>JOB TITLE</th>
-    <th style='text-align:center;width:120px;!important;'>TYPE OF PRINT</th>
-    <th style='text-align:center;width:50px;!important;'>SIZE</th>
-    <th style='text-align:center;width:100px;!important;'>PAPER TYPE</th>
-    <th style='text-align:center;width:120px;!important;'>PAPER WEIGHT</th>
-    <th style='text-align:center;width:130px;!important;'>PRINTING METHOD</th>
-    <th style='text-align:center;width:130px;!important;'>PRINTING PROCESS</th>
-    <th style='text-align:center;width:150px;!important;'>TREAMENT PROCESS</th>
-    <th style='text-align:center;width:150px;!important;'>FINISHING PROCESS</th>
-    <th style='text-align:center;width:130px;!important;'>BINDING PROCESS</th>
-    <th style='text-align:center;width:90px;!important;'>QUANTITY</th>
-    <th style='text-align:center;width:120px;!important;'>DATE REQUIRED</th>
-    <th style='text-align:center;width:150px;!important;'>DELIVERY LOCATION</th>
-     <th style='text-align:center;width:150px;!important;'>REMARKS</th>
-    <th style='text-align:center;width:100px;!important;'>PRICE($)</th>
-    </tr>
-    </thead>
-    <tbody>";
-    $appendTable4 .="<tr>";
+    $SelectedRow=array();
     while($record=mysqli_fetch_array($sql))
     {
-        $price=$record[17];
+        $ID=$record[1];
         for($y = 2; $y <=16; $y++)
         {
-             if($y==16)
-             {
-              $appendTable4 .="<td style='text-align:right;font-size: 14px !important;'>".$record[16]."</td>";
-             }
-             elseif($y==13)
-             {
-               if($record[$y]=='0000-00-00')
-               {
-                   $appendTable4 .="<td style='text-align:right;font-size: 14px !important;'></td>";
-               }
-                 else
-                 {
-                     $appendTable4 .="<td style='text-align:right;font-size: 14px !important;'>".$record[13]."</td>";
-                 }
-             }
-            else
-            {
-            $appendTable4 .="<td style='font-size: 14px !important;'>".$record[$y]."</td>";
-            }
+            array_push($SelectedRow,$record[$y]);
         }
-
-        $appendTable4 .="</tr>";
     }
-    $appendTable4 .="<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style='text-align:right;font-weight: bold;'>TOTAL</td><td style='background-color:#FFE4B5;color:black;text-align:right;font-weight: bold;font-size: 14px !important;'>".$price."</td>";
-    $appendTable4 .="</tbody></table>";
-    $valuearray=array($appendTable4,$status);
+    array_push($SelectedRow,$ID);
+    $valuearray=array($SelectedRow,$status,$uploadimagename,$podimages);
     echo JSON_encode($valuearray);
 }
 elseif($_REQUEST["option"]=="userenquirysearch")
@@ -347,14 +240,13 @@ elseif($_REQUEST["option"]=="userenquirysearch")
     {
         $oldimage_details=$imagerow["ULD_UPLOAD_IMG_NAME"];
     }
-    $imagelist=explode("/", $oldimage_details);
-    $values=array($oldenquiry_details,$imagelist);
+    $values=array($oldenquiry_details,$oldimage_details);
 
     echo JSON_encode($values);
 }
 elseif($_REQUEST["Option"]=="AdminNotificationList")
 {
-    $enquiryselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED.UED_ENQUIRY_ID,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND ES.ES_ID = 1 AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND UED.UED_ID=UPD.UED_ID ORDER BY UED.UED_TIMESTAMP DESC";
+    $enquiryselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED.UED_ENQUIRY_ID,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND ES.ES_ID = 1 AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND UED.UED_ID=UPD.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $enquirysql=mysqli_query($connection,$enquiryselect_option);
     $enquiryrecord=mysqli_num_rows($enquirysql);
     $y=$enquiryrecord;
@@ -371,7 +263,7 @@ elseif($_REQUEST["Option"]=="AdminNotificationList")
     }
     $appendTablenotifi_enquiry .="</tbody></table>";
 
-    $conformselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 3 AND UED.UED_ID=UPD.UED_ID ORDER BY UED.UED_TIMESTAMP DESC";
+    $conformselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 3 AND UED.UED_ID=UPD.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $conformsql=mysqli_query($connection,$conformselect_option);
     $conformrecord=mysqli_num_rows($conformsql);
     $y=$conformrecord;
@@ -387,7 +279,7 @@ elseif($_REQUEST["Option"]=="AdminNotificationList")
     }
     $appendTablenotifi_conform .="</tbody></table>";
 
-    $reorderselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME)AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 4 AND UED.UED_ID=UPD.UED_ID ORDER BY UED.UED_TIMESTAMP DESC";
+    $reorderselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME)AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 4 AND UED.UED_ID=UPD.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $reordersql=mysqli_query($connection,$reorderselect_option);
     $reorderrecord=mysqli_num_rows($reordersql);
     $y=$reorderrecord;
@@ -403,7 +295,7 @@ elseif($_REQUEST["Option"]=="AdminNotificationList")
         $appendTablenotifi_reorder .="</tr>";
     }
     $appendTablenotifi_reorder .="</tbody></table>";
-    $deliveredselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME)AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 5 AND UED.UED_ID=UPD.UED_ID ORDER BY UED.UED_TIMESTAMP DESC";
+    $deliveredselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME)AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID  AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 5 AND UED.UED_ID=UPD.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $deliveredsql=mysqli_query($connection,$deliveredselect_option);
     $deliveredrecord=mysqli_num_rows($deliveredsql);
     $y=$deliveredrecord;
@@ -425,7 +317,7 @@ elseif($_REQUEST["Option"]=="AdminNotificationList")
 }
 elseif($_REQUEST["Option"]=="User_NotificationList")
 {
-    $enquiryselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 2 and ULD.ULD_USERNAME='$session_id' AND UPD.UED_ID=UED.UED_ID ORDER BY UED.UED_TIMESTAMP DESC";
+    $enquiryselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 2 and ULD.ULD_USERNAME='$session_id' AND UPD.UED_ID=UED.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $enquirysql=mysqli_query($connection,$enquiryselect_option);
     $enquiryrecord=mysqli_num_rows($enquirysql);
     $y=$enquiryrecord;
@@ -442,7 +334,7 @@ elseif($_REQUEST["Option"]=="User_NotificationList")
     }
     $appendTablenotifi_enquiry .="</tbody></table>";
 
-    $conformselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 4 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UED.UED_TIMESTAMP DESC";
+    $conformselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 4 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $conformsql=mysqli_query($connection,$conformselect_option);
     $conformrecord=mysqli_num_rows($conformsql);
     $y=$conformrecord;
@@ -458,7 +350,7 @@ elseif($_REQUEST["Option"]=="User_NotificationList")
     }
     $appendTablenotifi_conform .="</tbody></table>";
 
-    $reorderselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 5 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UED.UED_TIMESTAMP DESC";
+    $reorderselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 5 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $reordersql=mysqli_query($connection,$reorderselect_option);
     $reorderrecord=mysqli_num_rows($reordersql);
     $y=$reorderrecord;
@@ -474,7 +366,7 @@ elseif($_REQUEST["Option"]=="User_NotificationList")
         $appendTablenotifi_reorder .="</tr>";
     }
     $appendTablenotifi_reorder .="</tbody></table>";
-    $Deliveredselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 3 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UED.UED_TIMESTAMP DESC";
+    $Deliveredselect_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UPD.PD_JOB_TITLE,UED_ENQUIRY_ID, QD.QD_QUOTATION_ID,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T') FROM JP_USER_ENQUIRY_DETAILS UED, JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1, JP_QUOTATION_DETAILS QD,JP_USER_PRODUCT_DETAILS UPD WHERE UED.ES_ID = ES.ES_ID AND UED.ULD_ID = ULD.ULD_ID AND UED.UED_USERSTAMP_ID=ULD1.ULD_ID AND UED.QD_ID = QD.QD_ID AND ES.ES_ID = 3 AND UPD.UED_ID=UED.UED_ID AND ULD.ULD_USERNAME='$session_id' ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $Deliveredsql=mysqli_query($connection,$Deliveredselect_option);
     $Deliveredrecord=mysqli_num_rows($Deliveredsql);
     $y=$Deliveredrecord;
@@ -536,26 +428,6 @@ elseif($_REQUEST["Option"]=="Delivered")
     $tabledata=DeliveredQuotationlist();
     echo json_encode($tabledata);
 }
-elseif($_REQUEST["Option"]=="UserNotification")
-{
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UED.UED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,ULD1.ULD_IMAGE_NAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1 WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID  AND UED.ES_ID IN (2,5) AND ULD.ULD_USERNAME='$login_session'";
-    $sql=mysqli_query($connection,$select_option);
-    $record=mysqli_num_rows($sql);
-    $y=$record;
-    while($record=mysqli_fetch_array($sql))
-    {
-            if($record[4]=='Quotation Updated')
-            {
-            $message="Quotation Generated For Enquiry Id:".$record[2]." And Quotation Id:".$record[3]." Check The Updated Quotation On Enquiry Details Table";
-            }
-            elseif($record[4]=='Delivered')
-            {
-            $message="Product Delivered For Enquiry Id:".$record[2]." And Quotation Id:".$record[3]." Check The Details on Enquiry Details Table";
-            }
-        $notificationdetails[]=array($record[5],$message,$record[6]);
-    }
-    echo JSON_encode($notificationdetails);
-}
 
 elseif($_REQUEST["Option"]=="AdminDeliveredQuotationList")
 {
@@ -564,12 +436,12 @@ elseif($_REQUEST["Option"]=="AdminDeliveredQuotationList")
 }
 elseif($_REQUEST["Option"]=="AdminCancelledQuotationList")
 {
-    $list=DeliveredQuotationlist(4);
+    $list=Cancelled_Quotationlist(4);
     echo $list;
 }
 elseif($_REQUEST["Option"]=="AdminconfirmedQuotationList")
 {
-    $list=DeliveredQuotationlist(3);
+    $list=Delivered_Quotationlist(3);
     echo $list;
 }
 elseif($_REQUEST['Option']=="EMAILTEMPLATE")
@@ -736,14 +608,13 @@ function Enquirylist()
 {
     global $connection;
     global $session_id;
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UED_ENQUIRY_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,GROUP_CONCAT(ID.ITD_ITEM  SEPARATOR '^^') AS PRODUCT_NAME,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UED_ENQUIRY_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,ID.ITD_ITEM,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME
                     FROM
                     JP_USER_ENQUIRY_DETAILS UED LEFT JOIN JP_QUOTATION_DETAILS QD
                     ON UED.UED_ID=QD.UED_ID,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_PRODUCT_DETAILS UPD
                     LEFT JOIN JP_ITEM_DETAILS ID ON UPD.ETI_ID=ID.ITD_ID
                     WHERE
-                    UED.ULD_ID=(SELECT ULD_ID FROM JP_USER_LOGIN_DETAILS WHERE ULD_USERNAME='$session_id') AND ULD.ULD_ID=UED.ULD_ID AND ES.ES_ID=UED.ES_ID AND UED.UED_ID=UPD.UED_ID
-                    AND ES.ES_ID=1 GROUP BY UED_TIMESTAMP DESC";
+                    UED.ULD_ID=(SELECT ULD_ID FROM JP_USER_LOGIN_DETAILS WHERE ULD_USERNAME='$session_id') AND ULD.ULD_ID=UED.ULD_ID AND ES.ES_ID=UED.ES_ID AND UED.UED_ID=UPD.UED_ID AND ES.ES_ID=1 ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
@@ -801,10 +672,10 @@ function User_Quotationlist()
 {
     global $connection;
     global $session_id;
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UED_ENQUIRY_ID,QD.QD_QUOTATION_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,GROUP_CONCAT(ETI.ITD_ITEM  SEPARATOR '^^'),UED.UED_PURCHASE_ORDER_NO,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME,UED.ULD_POD_IMAGENAME
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UED_ENQUIRY_ID,QD.QD_QUOTATION_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,ETI.ITD_ITEM,UED.UED_PURCHASE_ORDER_NO,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME,UED.ULD_POD_IMAGENAME
     FROM JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD ,JP_USER_PRODUCT_DETAILS UPD
     left join JP_ITEM_DETAILS ETI on ETI.ITD_ID=UPD.ETI_ID,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD
-    WHERE UED.ULD_ID=(SELECT ULD_ID FROM JP_USER_LOGIN_DETAILS WHERE ULD_USERNAME= '$session_id') AND ULD.ULD_ID=UED.ULD_ID AND ES.ES_ID=UED.ES_ID AND UED.UED_ID=UPD.UED_ID AND  UED.QD_ID IS NOT NULL AND UED.UED_ID=QD.UED_ID GROUP BY UED_TIMESTAMP DESC";
+    WHERE UED.ULD_ID=(SELECT ULD_ID FROM JP_USER_LOGIN_DETAILS WHERE ULD_USERNAME= '$session_id') AND ULD.ULD_ID=UED.ULD_ID AND ES.ES_ID=UED.ES_ID AND UED.UED_ID=UPD.UED_ID AND  UED.QD_ID IS NOT NULL AND UED.UED_ID=QD.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
@@ -873,28 +744,28 @@ function User_Quotationlist()
 function AdminEnquiryList()
 {
     global $connection;
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD_USERNAME),UED_ENQUIRY_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,GROUP_CONCAT(ID.ITD_ITEM  SEPARATOR '^^') AS PRODUCT_NAME,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD_USERNAME),UED_ENQUIRY_ID,ES.ES_STATUS,UPD.PD_JOB_TITLE,ID.ITD_ITEM,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),ULD_UPLOAD_IMG_NAME
                     FROM
                     JP_USER_ENQUIRY_DETAILS UED LEFT JOIN JP_QUOTATION_DETAILS QD
                     ON UED.UED_ID=QD.UED_ID,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_PRODUCT_DETAILS UPD
                     LEFT JOIN JP_ITEM_DETAILS ID ON UPD.ETI_ID=ID.ITD_ID
                     WHERE
                     ULD.ULD_ID=UED.ULD_ID AND ES.ES_ID=UED.ES_ID AND UED.UED_ID=UPD.UED_ID
-                    AND ES.ES_ID=1 GROUP BY UED_TIMESTAMP DESC";
+                    AND ES.ES_ID=1 ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
-    $appendTable1 ="<table id='user_table' border=1 cellspacing='0' data-class='table'  class=' srcresult table'>
+    $appendTable1 ="<table id='user_table' style='width:1500px' border=1 cellspacing='0' data-class='table'  class=' srcresult table'>
     <thead class='headercolor'>
     <tr class='head' style='text-align:center'>
     <th style='text-align:center;vertical-align: top'>DATE REQUIRED</th>
-    <th style='text-align:center;vertical-align: top'>USERNAME</th>
-    <th style='text-align:center;vertical-align: top'>ENQUIRY ID</th>
-    <th style='text-align:center;vertical-align: top'>STATUS</th>
-    <th style='text-align:center;vertical-align: top'>JOB TITLE</th>
-    <th style='text-align:center;vertical-align: top'>TYPE OF PRINT</th>
-    <th style='text-align:center;vertical-align: top'>TIMESTAMP</th>
-    <th style='text-align:center;vertical-align: top'>UPLOAD IMAGES</th>
+    <th style='text-align:center;vertical-align: top;width:120px;'>USERNAME</th>
+    <th style='text-align:center;vertical-align: top;width:120px;'>ENQUIRY ID</th>
+    <th style='text-align:center;vertical-align: top;width:120px;'>STATUS</th>
+    <th style='text-align:center;vertical-align: top;width:150px;'>JOB TITLE</th>
+    <th style='text-align:center;vertical-align: top;;width:150px;'>TYPE OF PRINT</th>
+    <th style='text-align:center;vertical-align: top;width:150px;'>TIMESTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:200px;'>UPLOAD IMAGES</th>
     </tr>
     </thead>
     <tbody>";
@@ -938,7 +809,7 @@ function AdminEnquiryList()
 function Quotationlist()
 {
     global $connection;
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_POD_IMAGENAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.UED_ID=UPD.UED_ID AND UED.ES_ID IN(2) ORDER BY UED.UED_TIMESTAMP DESC";
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_UPLOAD_IMG_NAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.UED_ID=UPD.UED_ID AND UED.ES_ID IN(2) ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
@@ -954,7 +825,7 @@ function Quotationlist()
     <th style='text-align:center;vertical-align: top''>STATUS</th>
     <th style='text-align:center;vertical-align: top''>USERSTAMP</th>
     <th style='text-align:center;vertical-align: top''>TIMESTAMP</th>
-    <th style='text-align:center;vertical-align: top''>POD IMAGES</th>
+    <th style='text-align:center;vertical-align: top''>UPLOADED IMAGES</th>
     </tr>
     </thead>
     <tbody>";
@@ -986,24 +857,144 @@ function Quotationlist()
 function DeliveredQuotationlist($id)
 {
     global $connection;
-    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED.UED_PURCHASE_ORDER_NO,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_POD_IMAGENAME,UPD.PD_JOB_TITLE FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.ES_ID='$id' AND UPD.UED_ID=UED.UED_ID GROUP BY UED_TIMESTAMP DESC";
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED.UED_PURCHASE_ORDER_NO,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_UPLOAD_IMG_NAME,UED.ULD_POD_IMAGENAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.ES_ID='$id' AND UPD.UED_ID=UED.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
     $sql=mysqli_query($connection,$select_option);
     $record=mysqli_num_rows($sql);
     $y=$record;
-    $appendTable3 ="<table id='Deliveredlist_table' border=1 cellspacing='0' data-class='table'  class=' srcresult table' style='max-width:2000px'>
+    $appendTable3 ="<table id='Deliveredlist_table' style='width:2300px;' border=1 cellspacing='0' data-class='table'class='srcresult table'>
     <thead class='headercolor'>
     <tr class='head' style='text-align:center'>
-    <th style='text-align:center;vertical-align: top''>DATE REQUIRED</th>
-    <th style='text-align:center;vertical-align: top''>USERNAME</th>
-    <th style='text-align:center;vertical-align: top''>ENQUIRY ID</th>
-    <th style='text-align:center;vertical-align: top''>QUOTATION ID</th>
-    <th style='text-align:center;vertical-align: top''>JOB TITLE</th>
-    <th style='text-align:center;vertical-align: top'>PURCHASE ORDER NO</th>
-    <th style='text-align:center;vertical-align: top''>PRICE</th>
-    <th style='text-align:center;vertical-align: top''>STATUS</th>
-    <th style='text-align:center;vertical-align: top''>USERSTAMP</th>
-    <th style='text-align:center;vertical-align: top''>TIMESTAMP</th>
-    <th style='text-align:center;vertical-align: top''>POD IMAGES</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>DATE REQUIRED</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>USERNAME</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>ENQUIRY ID</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>QUOTATION ID</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>JOB TITLE</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>PURCHASE ORDER NO</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>PRICE</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>STATUS</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>USERSTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>TIMESTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>UPLOADED IMAGES</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>POD IMAGES</th>
+    </tr>
+    </thead>
+    <tbody>";
+    while($record=mysqli_fetch_array($sql))
+    {
+        $appendTable3 .="<tr id='$record[0]'>";
+        $QT_view="QT_view/".$record[0];
+        $EQ_viewid="Enquiryid/".$record[3];
+        for($y = 1; $y <13; $y++)
+        {
+            if($y==11 || $y==12)
+            {
+                $body='';
+                if($record[$y]!="" )
+                {
+                    $array=explode("/",$record[$y]);
+                    for($j=0;$j<count($array);$j++)
+                    {
+                        $a=$j+1;
+                        $body.='<a href="download.php?filename='.$array[$j].'" class="links">'.$a.'.'.$array[$j].'</a><br>';
+                    }
+                }
+                $appendTable3 .='<td>'.$body.'</td>';
+
+            }
+            elseif($y==4)
+            {
+                $appendTable3 .="<td><a href='#'id=$QT_view class='QuotationView' >".$record[$y]."</a></td>";
+            }
+            else
+            {
+                $appendTable3 .="<td>".$record[$y]."</td>";
+            }
+        }
+        $appendTable3 .="</tr>";
+    }
+    $appendTable3 .="</tbody></table>";
+    return $appendTable3;
+}
+function Cancelled_Quotationlist($id)
+{
+    global $connection;
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_UPLOAD_IMG_NAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.ES_ID='$id' AND UPD.UED_ID=UED.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
+    $sql=mysqli_query($connection,$select_option);
+    $record=mysqli_num_rows($sql);
+    $y=$record;
+    $appendTable3 ="<table id='Deliveredlist_table' style='width:2000px;' border=1 cellspacing='0' data-class='table'class='srcresult table'>
+    <thead class='headercolor'>
+    <tr class='head' style='text-align:center'>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>DATE REQUIRED</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>USERNAME</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>ENQUIRY ID</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>QUOTATION ID</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>JOB TITLE</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>PRICE</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>STATUS</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>USERSTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>TIMESTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>UPLOADED IMAGES</th>
+    </tr>
+    </thead>
+    <tbody>";
+    while($record=mysqli_fetch_array($sql))
+    {
+        $appendTable3 .="<tr id='$record[0]'>";
+        $QT_view="QT_view/".$record[0];
+        $EQ_viewid="Enquiryid/".$record[3];
+        for($y = 1; $y <11; $y++)
+        {
+            if($y==10)
+            {
+                $body='';
+                if($record[$y]!="" )
+                {
+                    $array=explode("/",$record[$y]);
+                    for($j=0;$j<count($array);$j++)
+                    {
+                        $a=$j+1;
+                        $body.='<a href="download.php?filename='.$array[$j].'" class="links">'.$a.'.'.$array[$j].'</a><br>';
+                    }
+                }
+                $appendTable3 .='<td>'.$body.'</td>';
+
+            }
+            elseif($y==4)
+            {
+                $appendTable3 .="<td><a href='#'id=$QT_view class='QuotationView' >".$record[$y]."</a></td>";
+            }
+            else
+            {
+                $appendTable3 .="<td>".$record[$y]."</td>";
+            }
+        }
+        $appendTable3 .="</tr>";
+    }
+    $appendTable3 .="</tbody></table>";
+    return $appendTable3;
+}
+function Delivered_Quotationlist($id)
+{
+    global $connection;
+    $select_option="SELECT UED.UED_ID,DATE_FORMAT(CONVERT_TZ(UPD.PD_REQUIRED_DATE,'+00:00','+08:00'), '%d-%m-%Y'),UCASE(ULD.ULD_USERNAME),UED.UED_ENQUIRY_ID,QD_QUOTATION_ID,UPD.PD_JOB_TITLE,UED.UED_PURCHASE_ORDER_NO,UED_PRICE,ES.ES_STATUS,UCASE(ULD1.ULD_USERNAME) AS USERSTAMP,DATE_FORMAT(CONVERT_TZ(UED.UED_TIMESTAMP,'+00:00','+08:00'), '%d-%m-%Y %T'),UED.ULD_UPLOAD_IMG_NAME FROM  JP_USER_ENQUIRY_DETAILS UED,JP_QUOTATION_DETAILS QD,JP_ENQUIRY_STATUS ES,JP_USER_LOGIN_DETAILS ULD,JP_USER_LOGIN_DETAILS ULD1,JP_USER_PRODUCT_DETAILS UPD WHERE  ES.ES_ID=UED.ES_ID AND ULD.ULD_ID=UED.ULD_ID AND ULD1.ULD_ID=UED.UED_USERSTAMP_ID AND QD.UED_ID=UED.UED_ID AND UED.ES_ID='$id' AND UPD.UED_ID=UED.UED_ID ORDER BY UPD.PD_REQUIRED_DATE DESC";
+    $sql=mysqli_query($connection,$select_option);
+    $record=mysqli_num_rows($sql);
+    $y=$record;
+    $appendTable3 ="<table id='Deliveredlist_table' style='width:2000px;' border=1 cellspacing='0' data-class='table'class='srcresult table'>
+    <thead class='headercolor'>
+    <tr class='head' style='text-align:center'>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>DATE REQUIRED</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>USERNAME</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>ENQUIRY ID</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>QUOTATION ID</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>JOB TITLE</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>PURCHASE ORDER NO</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>PRICE</th>
+    <th style='text-align:center;vertical-align: top;width:100px;!important;'>STATUS</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>USERSTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:150px;!important;'>TIMESTAMP</th>
+    <th style='text-align:center;vertical-align: top;width:200px;!important;'>UPLOADED IMAGES</th>
     </tr>
     </thead>
     <tbody>";
@@ -1017,13 +1008,13 @@ function DeliveredQuotationlist($id)
             if($y==11)
             {
                 $body='';
-                if($record[11]!="")
+                if($record[$y]!="" )
                 {
-                $array=explode("/",$record[11]);
-                for($j=0;$j<count($array);$j++)
-                {
-                      $body.='<a href="download.php?filename='.$array[$j].'" class="links">'.$array[$j].'</a><br>';
-                }
+                    $array=explode("/",$record[$y]);
+                    for($j=0;$j<count($array);$j++)
+                    {
+                        $body.='<a href="download.php?filename='.$array[$j].'" class="links">'.$array[$j].'</a><br>';
+                    }
                 }
                 $appendTable3 .='<td>'.$body.'</td>';
 

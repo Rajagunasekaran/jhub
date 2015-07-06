@@ -5,6 +5,7 @@ require_once("usermenu.php");
 <script>
     $(document).ready(function(){
         $("#Quantity").doValidation({rule:'numbersonly',prop:{realpart:6,leadzero:true}});
+        $('.autogrowcomments').autogrow({onInitialize: true});
         $('#enquirtload').css("color", "#73c20e");
         //**************NEW ENQUIRY FROM FILE UPLOAD PROCESS START*********************//
         $("#uploader").plupload({
@@ -429,7 +430,7 @@ require_once("usermenu.php");
                              <label>DELIVERY LOCATION</label>
                          </div>
                          <div class="col-md-3">
-                             <textarea class="form-control Validation" rows="2" id="DeliveryLocation" name="DeliveryLocation" placeholder="Delivery Location"></textarea>
+                             <textarea class="form-control Validation autogrowcomments" rows="2" id="DeliveryLocation" name="DeliveryLocation" placeholder="Delivery Location"></textarea>
                          </div>
                     </div>
                     <div class="row form-group">
@@ -437,7 +438,7 @@ require_once("usermenu.php");
                              <label>REMARKS/SPECIAL REQUEST</label>
                          </div>
                         <div class="col-md-3">
-                             <textarea class="form-control Validation" rows="2" id="Remarks" name="Remarks" placeholder="Remarks"></textarea>
+                             <textarea class="form-control Validation autogrowcomments" rows="2" id="Remarks" name="Remarks" placeholder="Remarks"></textarea>
                         </div>
                     </div>
                          <div class="col-md-4">
