@@ -185,7 +185,7 @@ $(document).ready(function(){
                         {
                             headerdata += '<div class="row form-group">';
                             headerdata += '<div class="col-md-3">';
-                            headerdata += '<label>POD IMAGES</label>';
+                            headerdata += '<label>POD IMAGES </label>';
                             headerdata += '</div>';
                             headerdata += '<div class="col-md-5">';
                             headerdata += '<a href="download.php?filename=' + data[i] + '" class="links">' + rowid + '.' + data[i] + '</a></div>';
